@@ -73,223 +73,148 @@ const GRID_INIT = [
     ]
 ];
 
-const GAME_INIT = {
-    gameState: {
-        currentTurn: 'player:1',
-        timer: null,
-        player1Score: 0,
-        player2Score: 0,
-        grid: [],
-        choices: {},
-        deck: {}
+// ------------------------------------
+// -------- HELPERS -------------------
+// ------------------------------------
+
+const getSocket = (playerKey, game) =>
+    playerKey === 'player:1' ? game.player1Socket : game.player2Socket;
+
+const getOpponentSocket = (playerKey, game) =>
+    playerKey === 'player:1' ? game.player2Socket : game.player1Socket;
+
+const rollDice = () => String(Math.floor(Math.random() * 6) + 1);
+
+const analyzeDices = (dices) => {
+    const counts = Array(7).fill(0);
+    let sum = 0;
+
+    for (const dice of dices) {
+        const val = parseInt(dice.value);
+        counts[val]++;
+        sum += val;
     }
-}
+
+    let hasPair = false;
+    let hasThreeOfAKind = false;
+    let threeOfAKindValue = null;
+    let hasFourOfAKind = false;
+    let hasFiveOfAKind = false;
+
+    for (let i = 1; i <= 6; i++) {
+        if (counts[i] >= 2) hasPair = true;
+        if (counts[i] >= 3) { hasThreeOfAKind = true; threeOfAKindValue = i; }
+        if (counts[i] >= 4) hasFourOfAKind = true;
+        if (counts[i] >= 5) hasFiveOfAKind = true;
+    }
+
+    const sortedValues = dices.map(d => parseInt(d.value)).sort((a, b) => a - b);
+    const hasStraight = sortedValues.every((v, i) => i === 0 || v === sortedValues[i - 1] + 1);
+
+    return { counts, sum, hasPair, hasThreeOfAKind, threeOfAKindValue, hasFourOfAKind, hasFiveOfAKind, hasStraight };
+};
+
+// ------------------------------------
+// -------- SERVICE -------------------
+// ------------------------------------
 
 const GameService = {
 
     init: {
-        gameState: () => {
-            return {
-                idGame: null,
-                gameState: {
-                    currentTurn: 'player:1',
-                    timer: TURN_DURATION,
-                    player1Score: 0,
-                    player2Score: 0,
-                    deck: { ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) },
-                    choices: { ...CHOICES_INIT },
-                    grid: GRID_INIT.map(row => row.map(cell => ({ ...cell }))),
-                }
-            };
-        },
+        gameState: () => ({
+            idGame: null,
+            gameState: {
+                currentTurn: 'player:1',
+                timer: TURN_DURATION,
+                player1Score: 0,
+                player2Score: 0,
+                deck: { ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) },
+                choices: { ...CHOICES_INIT },
+                grid: GRID_INIT.map(row => row.map(cell => ({ ...cell }))),
+            }
+        }),
 
-        deck: () => {
-            return { ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) };
-        },
+        deck: () => ({ ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) }),
 
-        choices: () => {
-            return { ...CHOICES_INIT };
-        },
+        choices: () => ({ ...CHOICES_INIT }),
 
-        grid: () => {
-            return GRID_INIT.map(row => row.map(cell => ({ ...cell })));
-        }
+        grid: () => GRID_INIT.map(row => row.map(cell => ({ ...cell }))),
     },
 
     send: {
         forPlayer: {
-            // Return conditionnaly gameState custom objet for player views
-            viewGameState: (playerKey, game) => {
-                return {
-                    inQueue: false,
-                    inGame: true,
-                    idPlayer:
-                        (playerKey === 'player:1')
-                            ? game.player1Socket.id
-                            : game.player2Socket.id,
-                    idOpponent:
-                        (playerKey === 'player:1')
-                            ? game.player2Socket.id
-                            : game.player1Socket.id
-                };
-            },
+            viewGameState: (playerKey, game) => ({
+                inQueue: false,
+                inGame: true,
+                idPlayer: getSocket(playerKey, game).id,
+                idOpponent: getOpponentSocket(playerKey, game).id,
+            }),
 
-            viewQueueState: () => {
-                return {
-                    inQueue: true,
-                    inGame: false,
-                };
-            },
+            viewQueueState: () => ({ inQueue: true, inGame: false }),
 
             gameTimer: (playerKey, gameState) => {
-                // Selon la clé du joueur on adapte la réponse (player / opponent)
-                const playerTimer = gameState.currentTurn === playerKey ? gameState.timer : 0;
-                const opponentTimer = gameState.currentTurn === playerKey ? 0 : gameState.timer;
-                return { playerTimer: playerTimer, opponentTimer: opponentTimer };
-            },
-
-            gridViewState: (playerKey, gameState) => {
-
+                const isMyTurn = gameState.currentTurn === playerKey;
                 return {
-                    displayGrid: true,
-                    canSelectCells: (playerKey === gameState.currentTurn) && (gameState.choices.availableChoices.length > 0),
-                    grid: gameState.grid
+                    playerTimer: isMyTurn ? gameState.timer : 0,
+                    opponentTimer: isMyTurn ? 0 : gameState.timer,
                 };
-
             },
 
-            deckViewState: (playerKey, gameState) => {
-                const deckViewState = {
-                    displayPlayerDeck: gameState.currentTurn === playerKey,
-                    displayOpponentDeck: gameState.currentTurn !== playerKey,
-                    displayRollButton: gameState.deck.rollsCounter <= gameState.deck.rollsMaximum,
-                    rollsCounter: gameState.deck.rollsCounter,
-                    rollsMaximum: gameState.deck.rollsMaximum,
-                    dices: gameState.deck.dices
-                };
-                return deckViewState;
-            },
+            gridViewState: (playerKey, gameState) => ({
+                displayGrid: true,
+                canSelectCells: (playerKey === gameState.currentTurn) && (gameState.choices.availableChoices.length > 0),
+                grid: gameState.grid,
+            }),
 
-            choicesViewState: (playerKey, gameState) => {
-                const choicesViewState = {
-                    displayChoices: true,
-                    canMakeChoice: playerKey === gameState.currentTurn,
-                    idSelectedChoice: gameState.choices.idSelectedChoice,
-                    availableChoices: gameState.choices.availableChoices
-                }
-                return choicesViewState;
-            }
+            deckViewState: (playerKey, gameState) => ({
+                displayPlayerDeck: gameState.currentTurn === playerKey,
+                displayOpponentDeck: gameState.currentTurn !== playerKey,
+                displayRollButton: gameState.deck.rollsCounter <= gameState.deck.rollsMaximum,
+                rollsCounter: gameState.deck.rollsCounter,
+                rollsMaximum: gameState.deck.rollsMaximum,
+                dices: gameState.deck.dices,
+            }),
+
+            choicesViewState: (playerKey, gameState) => ({
+                displayChoices: true,
+                canMakeChoice: playerKey === gameState.currentTurn,
+                idSelectedChoice: gameState.choices.idSelectedChoice,
+                availableChoices: gameState.choices.availableChoices,
+            }),
         }
     },
 
     timer: {
-        getTurnDuration: () => {
-            return TURN_DURATION;
-        }
+        getTurnDuration: () => TURN_DURATION,
     },
 
     dices: {
-        roll: (dicesToRoll) => {
-            const rolledDices = dicesToRoll.map(dice => {
-                if (dice.value === "") {
-                    // Si la valeur du dé est vide, alors on le lance en mettant le flag locked à false
-                    const newValue = String(Math.floor(Math.random() * 6) + 1);
-                    return {
-                        id: dice.id,
-                        value: newValue,
-                        locked: false
-                    };
-                } else if (!dice.locked) {
-                    // Si le dé n'est pas verrouillé et possède déjà une valeur, alors on le relance
-                    const newValue = String(Math.floor(Math.random() * 6) + 1);
-                    return {
-                        ...dice,
-                        value: newValue
-                    };
-                } else {
-                    // Si le dé est verrouillé ou a déjà une valeur mais le flag locked est true, on le laisse tel quel
-                    return dice;
-                }
-            });
-            return rolledDices;
-        },
+        roll: (dices) => dices.map(dice => {
+            if (dice.locked && dice.value !== '') return dice;
+            return { ...dice, value: rollDice(), locked: false };
+        }),
 
-        lockEveryDice: (dicesToLock) => {
-            const lockedDices = dicesToLock.map(dice => ({
-                ...dice,
-                locked: true
-            }));
-            return lockedDices;
-        }
+        lockEveryDice: (dices) => dices.map(dice => ({ ...dice, locked: true })),
     },
 
     choices: {
         findCombinations: (dices, isDefi, isSec) => {
-            const availableCombinations = [];
-            const allCombinations = ALL_COMBINATIONS;
-
-            const counts = Array(7).fill(0); // Tableau pour compter le nombre de dés de chaque valeur (de 1 à 6)
-            let hasPair = false; // Pour vérifier si une paire est présente
-            let threeOfAKindValue = null; // Stocker la valeur du brelan
-            let hasThreeOfAKind = false; // Pour vérifier si un brelan est présent
-            let hasFourOfAKind = false; // Pour vérifier si un carré est présent
-            let hasFiveOfAKind = false; // Pour vérifier si un Yam est présent
-            let hasStraight = false; // Pour vérifier si une suite est présente
-            let sum = 0; // Somme des valeurs des dés
-
-            // Compter le nombre de dés de chaque valeur et calculer la somme
-            for (let i = 0; i < dices.length; i++) {
-                const diceValue = parseInt(dices[i].value);
-                counts[diceValue]++;
-                sum += diceValue;
-            }
-
-            // Vérifier les combinaisons possibles
-            for (let i = 1; i <= 6; i++) {
-                if (counts[i] === 2) {
-                    hasPair = true;
-                } else if (counts[i] === 3) {
-                    threeOfAKindValue = i;
-                    hasThreeOfAKind = true;
-                } else if (counts[i] === 4) {
-                    threeOfAKindValue = i;
-                    hasThreeOfAKind = true;
-                    hasFourOfAKind = true;
-                } else if (counts[i] === 5) {
-                    threeOfAKindValue = i;
-                    hasThreeOfAKind = true;
-                    hasFourOfAKind = true;
-                    hasFiveOfAKind = true;
-                }
-            }
-
-            const sortedValues = dices.map(dice => parseInt(dice.value)).sort((a, b) => a - b); // Trie les valeurs de dé
-
-            // Vérifie si les valeurs triées forment une suite
-            hasStraight = sortedValues.every((value, index) => index === 0 || value === sortedValues[index - 1] + 1);
-
-            // Vérifier si la somme ne dépasse pas 8
+            const { sum, hasPair, hasThreeOfAKind, threeOfAKindValue, hasFourOfAKind, hasFiveOfAKind, hasStraight } = analyzeDices(dices);
             const isLessThanEqual8 = sum <= 8;
 
-            // Retourner les combinaisons possibles via leur ID
-            allCombinations.forEach(combination => {
-                if (
-                    (combination.id.includes('brelan') && hasThreeOfAKind && parseInt(combination.id.slice(-1)) === threeOfAKindValue) ||
-                    (combination.id === 'full' && hasPair && hasThreeOfAKind) ||
-                    (combination.id === 'carre' && hasFourOfAKind) ||
-                    (combination.id === 'yam' && hasFiveOfAKind) ||
-                    (combination.id === 'suite' && hasStraight) ||
-                    (combination.id === 'moinshuit' && isLessThanEqual8) ||
-                    (combination.id === 'defi' && isDefi)
-                ) {
-                    availableCombinations.push(combination);
-                }
-            });
+            const availableCombinations = ALL_COMBINATIONS.filter(combination =>
+                (combination.id.includes('brelan') && hasThreeOfAKind && parseInt(combination.id.slice(-1)) === threeOfAKindValue) ||
+                (combination.id === 'full' && hasPair && hasThreeOfAKind) ||
+                (combination.id === 'carre' && hasFourOfAKind) ||
+                (combination.id === 'yam' && hasFiveOfAKind) ||
+                (combination.id === 'suite' && hasStraight) ||
+                (combination.id === 'moinshuit' && isLessThanEqual8) ||
+                (combination.id === 'defi' && isDefi)
+            );
 
-            const notOnlyBrelan = availableCombinations.some(combination => !combination.id.includes('brelan'));
-
+            const notOnlyBrelan = availableCombinations.some(c => !c.id.includes('brelan'));
             if (isSec && availableCombinations.length > 0 && notOnlyBrelan) {
-                availableCombinations.push(allCombinations.find(combination => combination.id === 'sec'));
+                availableCombinations.push(ALL_COMBINATIONS.find(c => c.id === 'sec'));
             }
 
             return availableCombinations;
@@ -297,59 +222,27 @@ const GameService = {
     },
 
     grid: {
+        resetCanBeCheckedCells: (grid) =>
+            grid.map(row => row.map(cell => ({ ...cell, canBeChecked: false }))),
 
-        resetcanBeCheckedCells: (grid) => {
-            const updatedGrid = grid.map(row => row.map(cell => {
-                return { ...cell, canBeChecked: false };
-            }));
-            return updatedGrid;
-        },
+        updateGridAfterSelectingChoice: (idSelectedChoice, grid) =>
+            grid.map(row => row.map(cell =>
+                cell.id === idSelectedChoice && cell.owner === null
+                    ? { ...cell, canBeChecked: true }
+                    : cell
+            )),
 
-        updateGridAfterSelectingChoice: (idSelectedChoice, grid) => {
-
-            const updatedGrid = grid.map(row => row.map(cell => {
-                if (cell.id === idSelectedChoice && cell.owner === null) {
-                    return { ...cell, canBeChecked: true };
-                } else {
-                    return cell;
-                }
-            }));
-
-            return updatedGrid;
-        },
-
-        selectCell: (idCell, rowIndex, cellIndex, currentTurn, grid) => {
-            const updatedGrid = grid.map((row, rowIndexParsing) => row.map((cell, cellIndexParsing) => {
-                if ((cell.id === idCell) && (rowIndexParsing === rowIndex) && (cellIndexParsing === cellIndex)) {
-                    return { ...cell, owner: currentTurn };
-                } else {
-                    return cell;
-                }
-            }));
-
-            return updatedGrid;
-        },
+        selectCell: (idCell, rowIndex, cellIndex, currentTurn, grid) =>
+            grid.map((row, rIdx) => row.map((cell, cIdx) =>
+                cell.id === idCell && rIdx === rowIndex && cIdx === cellIndex
+                    ? { ...cell, owner: currentTurn }
+                    : cell
+            )),
 
         isAnyCombinationAvailableOnGridForPlayer: (gameState) => {
-            const grid = gameState.grid;
-            const availableChoices = gameState.choices.availableChoices;
-
-            // parcours de la grille pour vérifier si une combinaison est disponible pour le joueur dont c'est le tour
-            for (let row of grid) {
-                for (let cell of row) {
-                    // vérifie si la cellule peut être vérifiée et si elle n'a pas déjà de propriétaire
-                    if (cell.owner === null) {
-                        for (let combination of availableChoices) {
-                            if (cell.id === combination.id) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false; // aucune combinaison disponible pour le joueur actuel
-        }
+            const availableIds = new Set(gameState.choices.availableChoices.map(c => c.id));
+            return gameState.grid.flat().some(cell => cell.owner === null && availableIds.has(cell.id));
+        },
     },
 
     utils: {
@@ -362,6 +255,6 @@ const GameService = {
         findDiceIndexByDiceId: (dices, idDice) =>
             dices.findIndex(d => d.id === idDice),
     }
-}
+};
 
 module.exports = GameService;

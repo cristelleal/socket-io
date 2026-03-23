@@ -49,7 +49,7 @@ const endTurn = (game) => {
   game.gameState.timer = GameService.timer.getTurnDuration();
   game.gameState.deck = GameService.init.deck();
   game.gameState.choices = GameService.init.choices();
-  game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
+  game.gameState.grid = GameService.grid.resetCanBeCheckedCells(game.gameState.grid);
 
   updateClientsViewTimers(game);
   updateClientsViewDecks(game);
@@ -162,7 +162,7 @@ io.on('connection', socket => {
 
     const game = games[gameIndex];
     game.gameState.choices.idSelectedChoice = data.choiceId;
-    game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
+    game.gameState.grid = GameService.grid.resetCanBeCheckedCells(game.gameState.grid);
     game.gameState.grid = GameService.grid.updateGridAfterSelectingChoice(data.choiceId, game.gameState.grid);
 
     updateClientsViewChoices(game);
@@ -174,7 +174,7 @@ io.on('connection', socket => {
     if (gameIndex === -1) return;
 
     const game = games[gameIndex];
-    game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
+    game.gameState.grid = GameService.grid.resetCanBeCheckedCells(game.gameState.grid);
     game.gameState.grid = GameService.grid.selectCell(data.cellId, data.rowIndex, data.cellIndex, game.gameState.currentTurn, game.gameState.grid);
 
     // TODO: Calculer le score
