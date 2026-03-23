@@ -294,34 +294,58 @@ const GameService = {
     grid: {
 
         resetcanBeCheckedCells: (grid) => {
-            const updatedGrid = grid.map(row =>
-                row.map(cell => ({ ...cell, canBeChecked: false }))
-            );
+            const updatedGrid = grid.map(row => row.map(cell => {
+                return { ...cell, canBeChecked: false };
+            }));
             return updatedGrid;
         },
 
         updateGridAfterSelectingChoice: (idSelectedChoice, grid) => {
-            const updatedGrid = grid.map(row =>
-                row.map(cell => ({
-                    ...cell,
-                    canBeChecked: cell.id === idSelectedChoice && cell.owner === null
-                }))
-            );
+
+            const updatedGrid = grid.map(row => row.map(cell => {
+                if (cell.id === idSelectedChoice && cell.owner === null) {
+                    return { ...cell, canBeChecked: true };
+                } else {
+                    return cell;
+                }
+            }));
+
             return updatedGrid;
         },
 
         selectCell: (idCell, rowIndex, cellIndex, currentTurn, grid) => {
-            const updatedGrid = grid.map((row, rIdx) =>
-                row.map((cell, cIdx) => {
-                    if (rIdx === rowIndex && cIdx === cellIndex) {
-                        return { ...cell, owner: currentTurn, canBeChecked: false };
-                    }
+            const updatedGrid = grid.map((row, rowIndexParsing) => row.map((cell, cellIndexParsing) => {
+                if ((cell.id === idCell) && (rowIndexParsing === rowIndex) && (cellIndexParsing === cellIndex)) {
+                    return { ...cell, owner: currentTurn };
+                } else {
                     return cell;
-                })
-            );
-            return updatedGrid;
-        }
+                }
+            }));
 
+            return updatedGrid;
+        },
+
+        isAnyCombinationAvailableOnGridForPlayer: (gameState) => {
+            const currentTurn = gameState.currentTurn;
+            const grid = gameState.grid;
+            const availableChoices = gameState.choices.availableChoices;
+
+            // parcours de la grille pour vérifier si une combinaison est disponible pour le joueur dont c'est le tour
+            for (let row of grid) {
+                for (let cell of row) {
+                    // vérifie si la cellule peut être vérifiée et si elle n'a pas déjà de propriétaire
+                    if (cell.owner === null) {
+                        for (let combination of availableChoices) {
+                            if (cell.id === combination.id) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false; // aucune combinaison disponible pour le joueur actuel
+        }
     },
 
     utils: {
