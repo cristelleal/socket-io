@@ -1,0 +1,54 @@
+import { useContext, useState } from "react";
+import { StyleSheet, View, Button, Text } from "react-native";
+import { SocketContext } from '../contexts/socket.context';
+import OnlineGameController from "../controllers/online-game.controller";
+
+export default function OnlineGameScreen({ navigation }) {
+
+    const socket = useContext(SocketContext);
+    const [inGame, setInGame] = useState(false);
+
+    return (
+        <View style={styles.container}>
+            {!socket && (
+                <>
+                    <Text style={styles.paragraph}>
+                        No connection with server...
+                    </Text>
+                    <Text style={styles.footnote}>
+                        Restart the app and wait for the server to be back again.
+                    </Text>
+                </>
+            )}
+
+            {socket && (
+                <>
+                    {!inGame && (
+                        <>
+                            <Text style={styles.paragraph}>
+                                Online Game Interface
+                            </Text>
+                            <Text style={styles.footnote}>
+                                My socket id is: {socket.id}
+                            </Text>
+                            <Button
+                                title="Revenir au menu"
+                                onPress={() => navigation.navigate('HomeScreen')}
+                            />
+                        </>
+                    )}
+                    <OnlineGameController onGameStateChange={setInGame} />
+                </>
+            )}
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
+    }
+});
