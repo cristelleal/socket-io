@@ -89,16 +89,22 @@ const GameService = {
 
     init: {
         gameState: () => {
-            const game = { ...GAME_INIT };
-            game['gameState']['timer'] = TURN_DURATION;
-            game['gameState']['deck'] = { ...DECK_INIT };
-            game['gameState']['choices'] = { ...CHOICES_INIT };
-            game['gameState']['grid'] = [ ...GRID_INIT];
-            return game;
+            return {
+                idGame: null,
+                gameState: {
+                    currentTurn: 'player:1',
+                    timer: TURN_DURATION,
+                    player1Score: 0,
+                    player2Score: 0,
+                    deck: { ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) },
+                    choices: { ...CHOICES_INIT },
+                    grid: GRID_INIT.map(row => row.map(cell => ({ ...cell }))),
+                }
+            };
         },
 
         deck: () => {
-            return { ...DECK_INIT };
+            return { ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) };
         },
 
         choices: () => {
@@ -106,7 +112,7 @@ const GameService = {
         },
 
         grid: () => {
-            return { ...GRID_INIT };
+            return GRID_INIT.map(row => row.map(cell => ({ ...cell })));
         }
     },
 
@@ -325,7 +331,6 @@ const GameService = {
         },
 
         isAnyCombinationAvailableOnGridForPlayer: (gameState) => {
-            const currentTurn = gameState.currentTurn;
             const grid = gameState.grid;
             const availableChoices = gameState.choices.availableChoices;
 
@@ -348,33 +353,14 @@ const GameService = {
     },
 
     utils: {
-        // Return game index in global games array by id
-        findGameIndexById: (games, idGame) => {
-            for (let i = 0; i < games.length; i++) {
-                if (games[i].idGame === idGame) {
-                    return i; // Retourne l'index du jeu si le socket est trouvé
-                }
-            }
-            return -1;
-        },
+        findGameIndexById: (games, idGame) =>
+            games.findIndex(g => g.idGame === idGame),
 
-        findGameIndexBySocketId: (games, socketId) => {
-            for (let i = 0; i < games.length; i++) {
-                if (games[i].player1Socket.id === socketId || games[i].player2Socket.id === socketId) {
-                    return i; // Retourne l'index du jeu si le socket est trouvé
-                }
-            }
-            return -1;
-        },
+        findGameIndexBySocketId: (games, socketId) =>
+            games.findIndex(g => g.player1Socket.id === socketId || g.player2Socket.id === socketId),
 
-        findDiceIndexByDiceId: (dices, idDice) => {
-            for (let i = 0; i < dices.length; i++) {
-                if (dices[i].id === idDice) {
-                    return i; // Retourne l'index du jeu si le socket est trouvé
-                }
-            }
-            return -1;
-        }
+        findDiceIndexByDiceId: (dices, idDice) =>
+            dices.findIndex(d => d.id === idDice),
     }
 }
 

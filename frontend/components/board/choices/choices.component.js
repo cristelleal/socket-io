@@ -1,6 +1,8 @@
-import { useState, useContext, useEffect } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useState, useContext } from "react";
+import { View, TouchableOpacity, Text } from "react-native";
 import { SocketContext } from "../../../contexts/socket.context";
+import useSocketEvent from "../../../hooks/useSocketEvent";
+import styles from './choices.styles';
 
 const Choices = () => {
 
@@ -11,24 +13,18 @@ const Choices = () => {
     const [idSelectedChoice, setIdSelectedChoice] = useState(null);
     const [availableChoices, setAvailableChoices] = useState([]);
 
-    useEffect(() => {
-
-        socket.on("game.choices.view-state", (data) => {
-            setDisplayChoices(data['displayChoices']);
-            setCanMakeChoice(data['canMakeChoice']);
-            setIdSelectedChoice(data['idSelectedChoice']);
-            setAvailableChoices(data['availableChoices']);
-        });
-
-    }, []);
+    useSocketEvent("game.choices.view-state", (data) => {
+        setDisplayChoices(data['displayChoices']);
+        setCanMakeChoice(data['canMakeChoice']);
+        setIdSelectedChoice(data['idSelectedChoice']);
+        setAvailableChoices(data['availableChoices']);
+    });
 
     const handleSelectChoice = (choiceId) => {
-
         if (canMakeChoice) {
             setIdSelectedChoice(choiceId);
             socket.emit("game.choices.selected", { choiceId });
         }
-
     };
 
     return (
@@ -51,37 +47,5 @@ const Choices = () => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    choicesContainer: {
-        flex: 1,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        paddingHorizontal: 10,
-        borderBottomWidth: 1,
-        borderColor: "black",
-        backgroundColor: "lightgrey"
-    },
-    choiceButton: {
-        backgroundColor: "white",
-        borderRadius: 5,
-        marginVertical: 5,
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "10%"
-    },
-    selectedChoice: {
-        backgroundColor: "lightgreen",
-    },
-    choiceText: {
-        fontSize: 13,
-        fontWeight: "bold",
-    },
-    disabledChoice: {
-        opacity: 0.5,
-    },
-});
 
 export default Choices;

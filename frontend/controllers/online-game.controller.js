@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SocketContext } from '../contexts/socket.context';
 import Board from '../components/board/board.component';
+import styles from './online-game.styles';
 
 export default function OnlineGameController() {
 
@@ -9,7 +10,7 @@ export default function OnlineGameController() {
 
     const [inQueue, setInQueue] = useState(false);
     const [inGame, setInGame] = useState(false);
-    const [idOpponent, setIdOpponent] = useState(null);
+    const [_idOpponent, setIdOpponent] = useState(null);
 
     useEffect(() => {
         console.log('[emit][queue.join]:', socket.id);
@@ -17,19 +18,26 @@ export default function OnlineGameController() {
         setInQueue(false);
         setInGame(false);
 
-        socket.on('queue.added', (data) => {
+        const onQueueAdded = (data) => {
             console.log('[listen][queue.added]:', data);
             setInQueue(data['inQueue']);
             setInGame(data['inGame']);
-        });
+        };
 
-        socket.on('game.start', (data) => {
+        const onGameStart = (data) => {
             console.log('[listen][game.start]:', data);
             setInQueue(data['inQueue']);
             setInGame(data['inGame']);
             setIdOpponent(data['idOpponent']);
-        });
+        };
 
+        socket.on('queue.added', onQueueAdded);
+        socket.on('game.start', onGameStart);
+
+        return () => {
+            socket.off('queue.added', onQueueAdded);
+            socket.off('game.start', onGameStart);
+        };
     }, []);
 
     return (
@@ -57,16 +65,3 @@ export default function OnlineGameController() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-        width: '100%',
-        height: '100%',
-    },
-    paragraph: {
-        fontSize: 16,
-    }
-});

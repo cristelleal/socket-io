@@ -44,75 +44,54 @@ const updateClientsViewGrid = (game) => {
 // -------- GAME METHODS -----------
 // ---------------------------------
 
-const createGame = (player1Socket, player2Socket) => {
+const endTurn = (game) => {
+  game.gameState.currentTurn = game.gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
+  game.gameState.timer = GameService.timer.getTurnDuration();
+  game.gameState.deck = GameService.init.deck();
+  game.gameState.choices = GameService.init.choices();
+  game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
 
-  // init objet (game) with this first level of structure:
-  // - gameState : { .. evolutive object .. }
-  // - idGame : just in case ;)
-  // - player1Socket: socket instance key "joueur:1"
-  // - player2Socket: socket instance key "joueur:2"
+  updateClientsViewTimers(game);
+  updateClientsViewDecks(game);
+  updateClientsViewChoices(game);
+  updateClientsViewGrid(game);
+};
+
+const createGame = (player1Socket, player2Socket) => {
   const newGame = GameService.init.gameState();
   newGame['idGame'] = uniqid();
   newGame['player1Socket'] = player1Socket;
   newGame['player2Socket'] = player2Socket;
 
-  // push game into 'games' global array
   games.push(newGame);
 
   const gameIndex = GameService.utils.findGameIndexById(games, newGame.idGame);
+  const game = games[gameIndex];
 
-  // just notifying screens that game is starting
-  games[gameIndex].player1Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:1', games[gameIndex]));
-  games[gameIndex].player2Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:2', games[gameIndex]));
+  game.player1Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:1', game));
+  game.player2Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:2', game));
 
-  updateClientsViewTimers(games[gameIndex]);
-  updateClientsViewDecks(games[gameIndex]);
-  updateClientsViewGrid(games[gameIndex]);
+  updateClientsViewTimers(game);
+  updateClientsViewDecks(game);
+  updateClientsViewGrid(game);
 
-  // timer every second
   const gameInterval = setInterval(() => {
+    game.gameState.timer--;
+    updateClientsViewTimers(game);
 
-    // timer variable decreased
-    games[gameIndex].gameState.timer--;
-
-    // emit timer to both clients every seconds
-    updateClientsViewTimers(games[gameIndex]);
-
-    // if timer is down to 0, we end turn
-    if (games[gameIndex].gameState.timer === 0) {
-
-      // switch currentTurn variable
-      games[gameIndex].gameState.currentTurn = games[gameIndex].gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
-      // reset timer
-      games[gameIndex].gameState.timer = GameService.timer.getTurnDuration();
-
-      // reset deck state
-      games[gameIndex].gameState.deck = GameService.init.deck();
-
-      // reset choices state
-      games[gameIndex].gameState.choices = GameService.init.choices();
-
-      // reset grid canBeChecked cells
-      games[gameIndex].gameState.grid = GameService.grid.resetcanBeCheckedCells(games[gameIndex].gameState.grid);
-
-      // reset views also
-      updateClientsViewTimers(games[gameIndex]);
-      updateClientsViewDecks(games[gameIndex]);
-      updateClientsViewChoices(games[gameIndex]);
-      updateClientsViewGrid(games[gameIndex]);
+    if (game.gameState.timer === 0) {
+      endTurn(game);
     }
-
   }, 1000);
 
-  // remove intervals at deconnection
-  player1Socket.on('disconnect', () => {
+  const cleanup = () => {
     clearInterval(gameInterval);
-  });
+    const idx = GameService.utils.findGameIndexById(games, game.idGame);
+    if (idx !== -1) games.splice(idx, 1);
+  };
 
-  player2Socket.on('disconnect', () => {
-    clearInterval(gameInterval);
-  });
-
+  player1Socket.on('disconnect', cleanup);
+  player2Socket.on('disconnect', cleanup);
 };
 
 const newPlayerInQueue = (socket) => {
@@ -143,106 +122,65 @@ io.on('connection', socket => {
   });
 
   socket.on('game.dices.roll', () => {
-
     const gameIndex = GameService.utils.findGameIndexBySocketId(games, socket.id);
+    if (gameIndex === -1) return;
 
-    // if not last throw
-    if (games[gameIndex].gameState.deck.rollsCounter < games[gameIndex].gameState.deck.rollsMaximum) {
+    const game = games[gameIndex];
+    const deck = game.gameState.deck;
 
-      // dices management
-      games[gameIndex].gameState.deck.dices = GameService.dices.roll(games[gameIndex].gameState.deck.dices);
-      games[gameIndex].gameState.deck.rollsCounter++;
+    if (deck.rollsCounter > deck.rollsMaximum) return;
 
-      // combinations management
-      const dices = games[gameIndex].gameState.deck.dices;
-      const isDefi = false;
-      const isSec = games[gameIndex].gameState.deck.rollsCounter === 2;
+    deck.dices = GameService.dices.roll(deck.dices);
+    deck.rollsCounter++;
 
-      const combinations = GameService.choices.findCombinations(dices, isDefi, isSec);
-      games[gameIndex].gameState.choices.availableChoices = combinations;
-
-      // emit to views new state
-      updateClientsViewDecks(games[gameIndex]);
-      updateClientsViewChoices(games[gameIndex]);
+    const isLastRoll = deck.rollsCounter > deck.rollsMaximum;
+    if (isLastRoll) {
+      deck.dices = GameService.dices.lockEveryDice(deck.dices);
     }
-    // if last throw
-    else {
 
-      // dices management
-      games[gameIndex].gameState.deck.dices = GameService.dices.roll(games[gameIndex].gameState.deck.dices);
-      games[gameIndex].gameState.deck.rollsCounter++;
-      games[gameIndex].gameState.deck.dices = GameService.dices.lockEveryDice(games[gameIndex].gameState.deck.dices);
+    const isSec = deck.rollsCounter === 2;
+    game.gameState.choices.availableChoices = GameService.choices.findCombinations(deck.dices, false, isSec);
 
-      // combinations management
-      const dices = games[gameIndex].gameState.deck.dices;
-      const isDefi = false;
-      const isSec = games[gameIndex].gameState.deck.rollsCounter === 2;
-
-      const combinations = GameService.choices.findCombinations(dices, isDefi, isSec);
-      games[gameIndex].gameState.choices.availableChoices = combinations;
-
-      // temporary put timer at 5 sec to test turn switching
-      games[gameIndex].gameState.timer = 5;
-
-      // emit to views new state
-      updateClientsViewDecks(games[gameIndex]);
-      updateClientsViewChoices(games[gameIndex]);
-    }
+    updateClientsViewDecks(game);
+    updateClientsViewChoices(game);
   });
 
   socket.on('game.dices.lock', (idDice) => {
-
     const gameIndex = GameService.utils.findGameIndexBySocketId(games, socket.id);
-    const indexDice = GameService.utils.findDiceIndexByDiceId(games[gameIndex].gameState.deck.dices, idDice);
+    if (gameIndex === -1) return;
 
-    // reverse flag 'locked'
-    games[gameIndex].gameState.deck.dices[indexDice].locked = !games[gameIndex].gameState.deck.dices[indexDice].locked;
+    const game = games[gameIndex];
+    const diceIndex = GameService.utils.findDiceIndexByDiceId(game.gameState.deck.dices, idDice);
+    game.gameState.deck.dices[diceIndex].locked = !game.gameState.deck.dices[diceIndex].locked;
 
-    updateClientsViewDecks(games[gameIndex]);
+    updateClientsViewDecks(game);
   });
 
   socket.on('game.choices.selected', (data) => {
-
-    // gestion des choix
     const gameIndex = GameService.utils.findGameIndexBySocketId(games, socket.id);
-    games[gameIndex].gameState.choices.idSelectedChoice = data.choiceId;
+    if (gameIndex === -1) return;
 
-    // mise à jour de la grille
-    games[gameIndex].gameState.grid = GameService.grid.resetcanBeCheckedCells(games[gameIndex].gameState.grid);
-    games[gameIndex].gameState.grid = GameService.grid.updateGridAfterSelectingChoice(data.choiceId, games[gameIndex].gameState.grid);
+    const game = games[gameIndex];
+    game.gameState.choices.idSelectedChoice = data.choiceId;
+    game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
+    game.gameState.grid = GameService.grid.updateGridAfterSelectingChoice(data.choiceId, game.gameState.grid);
 
-    updateClientsViewChoices(games[gameIndex]);
-    updateClientsViewGrid(games[gameIndex]);
+    updateClientsViewChoices(game);
+    updateClientsViewGrid(game);
   });
 
   socket.on('game.grid.selected', (data) => {
-
     const gameIndex = GameService.utils.findGameIndexBySocketId(games, socket.id);
+    if (gameIndex === -1) return;
 
-    // La sélection d'une cellule signifie la fin du tour (ou plus tard le check des conditions de victoires)
-    // On reset l'état des cases qui étaient précédemment clicables.
-    games[gameIndex].gameState.grid = GameService.grid.resetcanBeCheckedCells(games[gameIndex].gameState.grid);
-    games[gameIndex].gameState.grid = GameService.grid.selectCell(data.cellId, data.rowIndex, data.cellIndex, games[gameIndex].gameState.currentTurn, games[gameIndex].gameState.grid);
+    const game = games[gameIndex];
+    game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
+    game.gameState.grid = GameService.grid.selectCell(data.cellId, data.rowIndex, data.cellIndex, game.gameState.currentTurn, game.gameState.grid);
 
-    // TODO: Ici calculer le score
-    // TODO: Puis check si la partie s'arrête (lines / diagolales / no-more-gametokens)
+    // TODO: Calculer le score
+    // TODO: Vérifier les conditions de victoire (lignes / diagonales / grille pleine)
 
-    // Sinon on finit le tour
-    games[gameIndex].gameState.currentTurn = games[gameIndex].gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
-    games[gameIndex].gameState.timer = GameService.timer.getTurnDuration();
-
-    // On remet le deck et les choix à zéro (la grille, elle, ne change pas)
-    games[gameIndex].gameState.deck = GameService.init.deck();
-    games[gameIndex].gameState.choices = GameService.init.choices();
-
-    // On reset le timer
-    games[gameIndex].player1Socket.emit('game.timer', GameService.send.forPlayer.gameTimer('player:1', games[gameIndex].gameState));
-    games[gameIndex].player2Socket.emit('game.timer', GameService.send.forPlayer.gameTimer('player:2', games[gameIndex].gameState));
-
-    // et on remet à jour la vue
-    updateClientsViewDecks(games[gameIndex]);
-    updateClientsViewChoices(games[gameIndex]);
-    updateClientsViewGrid(games[gameIndex]);
+    endTurn(game);
   });
 
   socket.on('disconnect', reason => {

@@ -1,28 +1,28 @@
-import { useEffect, useContext, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useContext, useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { SocketContext } from "../../../contexts/socket.context";
+import useSocketEvent from "../../../hooks/useSocketEvent";
+import styles from './grid.styles';
 
 const Grid = () => {
 
     const socket = useContext(SocketContext);
 
     const [displayGrid, setDisplayGrid] = useState(true);
-    const [canSelectCells, setCanSelectCells] = useState([]);
+    const [canSelectCells, setCanSelectCells] = useState(false);
     const [grid, setGrid] = useState([]);
+
+    useSocketEvent("game.grid.view-state", (data) => {
+        setDisplayGrid(data['displayGrid']);
+        setCanSelectCells(data['canSelectCells']);
+        setGrid(data['grid']);
+    });
 
     const handleSelectCell = (cellId, rowIndex, cellIndex) => {
         if (canSelectCells) {
             socket.emit("game.grid.selected", { cellId, rowIndex, cellIndex });
         }
     };
-
-    useEffect(() => {
-        socket.on("game.grid.view-state", (data) => {
-            setDisplayGrid(data['displayGrid']);
-            setCanSelectCells(data['canSelectCells'])
-            setGrid(data['grid']);
-        });
-    }, []);
 
     return (
         <View style={styles.gridContainer}>
@@ -51,51 +51,5 @@ const Grid = () => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    gridContainer: {
-        flex: 7,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-    },
-    row: {
-        flexDirection: "row",
-        flex: 1,
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    cell: {
-        flexDirection: "row",
-        flex: 2,
-        width: "100%",
-        height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        borderWidth: 1,
-        borderColor: "black",
-    },
-    cellText: {
-        fontSize: 11,
-    },
-    playerOwnedCell: {
-        backgroundColor: "lightgreen",
-        opacity: 0.9,
-    },
-    opponentOwnedCell: {
-        backgroundColor: "lightcoral",
-        opacity: 0.9,
-    },
-    canBeCheckedCell: {
-        backgroundColor: "lightyellow",
-    },
-    topBorder: {
-        borderTopWidth: 1,
-    },
-    leftBorder: {
-        borderLeftWidth: 1,
-    },
-});
 
 export default Grid;
