@@ -1,4 +1,3 @@
-// Durée d'un tour en secondes
 const TURN_DURATION = 30;
 
 const DECK_INIT = {
