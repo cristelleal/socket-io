@@ -13,11 +13,11 @@ function App() {
   return (
     <SocketContext.Provider value={socket}>
       <NavigationContainer>
-        <Navigator initialRouteName="HomeScreen">
-          <Screen name="HomeScreen" component={HomeScreen} />
-          <Screen name="OnlineGameScreen" component={OnlineGameScreen} />
-          <Screen name="VsBotGameScreen" component={VsBotGameScreen} />
-        </Navigator>
+        <Stack.Navigator initialRouteName="HomeScreen">
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} />
+          <Stack.Screen name="VsBotGameScreen" component={VsBotGameScreen} />
+        </Stack.Navigator>
       </NavigationContainer>
     </SocketContext.Provider>
   );
