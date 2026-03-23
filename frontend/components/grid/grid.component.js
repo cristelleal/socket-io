@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { SocketContext } from "../../../contexts/socket.context";
-import useSocketEvent from "../../../hooks/useSocketEvent";
+import { SocketContext } from "../../contexts/socket.context";
+import useSocketEvent from "../../hooks/useSocketEvent";
 import styles from './grid.styles';
 
 const Grid = () => {
