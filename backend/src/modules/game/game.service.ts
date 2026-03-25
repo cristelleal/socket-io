@@ -1,5 +1,5 @@
 import { Cell, Choices, Combination, Deck, Dice, Game, GameState, PlayerKey } from '../../shared/types';
-import { TURN_DURATION, PIECES_PER_PLAYER, DECK_INIT, CHOICES_INIT, GRID_INIT, ALL_COMBINATIONS, SEC_COMBINATION, ALIGNMENT_DIRECTIONS } from './game.constants';
+import { TURN_DURATION, PIECES_PER_PLAYER, DECK_INIT, CHOICES_INIT, GRID_INIT, ALL_COMBINATIONS, SEC_COMBINATION } from './game.constants';
 import { rollDice, analyzeDices, getSocket, getOpponentSocket } from './game.helpers';
 
 export const GameService = {
