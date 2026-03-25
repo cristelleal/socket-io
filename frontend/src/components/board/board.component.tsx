@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
 import Timer from '../timer/timer.component';
+import Score from '../score/score.component';
 import OpponentDeck from '../decks/opponent-deck/opponent-deck.component';
 import PlayerDeck from '../decks/player-deck/player-deck.component';
 import Choices from '../choices/choices.component';
@@ -12,21 +13,9 @@ const OpponentInfos = () => (
   </View>
 );
 
-const OpponentScore = () => (
-  <View style={styles.opponentScoreContainer}>
-    <Text style={styles.scoreText}>Score</Text>
-  </View>
-);
-
 const PlayerInfos = () => (
   <View style={styles.playerInfosContainer}>
     <Text style={styles.infoText}>Joueur</Text>
-  </View>
-);
-
-const PlayerScore = () => (
-  <View style={styles.playerScoreContainer}>
-    <Text style={styles.scoreText}>Score</Text>
   </View>
 );
 
@@ -36,7 +25,7 @@ const Board = () => (
       <OpponentInfos />
       <View style={styles.opponentTimerScoreContainer}>
         <Timer timerKey="opponentTimer" />
-        <OpponentScore />
+        <Score scoreKey="opponentScore" />
       </View>
     </View>
     <View style={styles.rowDeck}>
@@ -53,7 +42,7 @@ const Board = () => (
       <PlayerInfos />
       <View style={styles.playerTimerScoreContainer}>
         <Timer timerKey="playerTimer" />
-        <PlayerScore />
+        <Score scoreKey="myScore" />
       </View>
     </View>
   </View>

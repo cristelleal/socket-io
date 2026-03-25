@@ -41,8 +41,16 @@ export interface ServerToClientEvents {
   'game.grid.view-state': (data: {
     displayGrid: boolean;
     canSelectCells: boolean;
+    canRemoveOpponentCells: boolean;
     grid: Cell[][];
   }) => void;
+  'game.score.view-state': (data: {
+    myScore: number;
+    opponentScore: number;
+    myPiecesLeft: number;
+    opponentPiecesLeft: number;
+  }) => void;
+  'game.end': (data: { winnerId: string; reason: string }) => void;
 }
 
 export interface ClientToServerEvents {
