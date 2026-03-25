@@ -6,6 +6,7 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
+        backgroundColor: '#f9f5ee',
     },
     row: {
         flexDirection: "row",
@@ -22,21 +23,22 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "black",
+        borderColor: "#e3d7c5",
+        backgroundColor: '#ffffff',
     },
     cellText: {
-        fontSize: 11,
+        fontSize: 12,
+        color: '#304255',
+        fontWeight: '700',
     },
     playerOwnedCell: {
-        backgroundColor: "lightgreen",
-        opacity: 0.9,
+        backgroundColor: "#cfe5f4",
     },
     opponentOwnedCell: {
-        backgroundColor: "lightcoral",
-        opacity: 0.9,
+        backgroundColor: "#f7c5b7",
     },
     canBeCheckedCell: {
-        backgroundColor: "lightyellow",
+        backgroundColor: "#f7f0e4",
     },
     topBorder: {
         borderTopWidth: 1,

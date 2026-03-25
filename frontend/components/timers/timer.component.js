@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, Text } from "react-native";
-import useSocketEvent from "../../../hooks/useSocketEvent";
+import useSocketEvent from '../../hooks/useSocketEvent';
 import styles from './timer.styles';
 
 const Timer = ({ timerKey }) => {
@@ -10,7 +10,7 @@ const Timer = ({ timerKey }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Timer: {timer}</Text>
+      <Text style={styles.timerText}>Timer: {timer}</Text>
     </View>
   );
 };

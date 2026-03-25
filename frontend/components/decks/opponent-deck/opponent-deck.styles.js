@@ -6,7 +6,8 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderBottomWidth: 1,
-        borderColor: "black"
+        borderColor: "#e6dac7",
+        backgroundColor: '#fdfaf5',
     },
     diceContainer: {
         flexDirection: "row",

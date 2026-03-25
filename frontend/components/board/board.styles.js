@@ -8,27 +8,32 @@ export default StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         height: '100%',
+        backgroundColor: '#ffffff',
+        borderWidth: 1,
+        borderColor: '#e6dac7',
+        borderRadius: 16,
+        overflow: 'hidden',
     },
     row: {
         flexDirection: 'row',
         width: '100%',
         borderBottomWidth: 1,
-        borderColor: 'black',
+        borderColor: '#e6dac7',
     },
     opponentInfosContainer: {
         flex: 7,
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 1,
-        borderColor: 'black',
-        backgroundColor: "lightgrey"
+        borderColor: '#e6dac7',
+        backgroundColor: '#f7f0e4'
     },
     opponentTimerScoreContainer: {
         flex: 3,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "lightgrey"
+        backgroundColor: '#f7f0e4'
     },
     opponentScoreContainer: {
         flex: 1,
@@ -40,20 +45,32 @@ export default StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 1,
-        borderColor: 'black',
-        backgroundColor: "lightgrey"
+        borderColor: '#e6dac7',
+        backgroundColor: '#f7f0e4'
     },
     playerTimerScoreContainer: {
         flex: 3,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "lightgrey"
+        backgroundColor: '#f7f0e4'
     },
     playerScoreContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "lightgrey"
+        backgroundColor: '#f7f0e4'
+    },
+    infoText: {
+        color: '#304255',
+        fontSize: 13,
+        fontWeight: '700',
+        letterSpacing: 0.4,
+    },
+    scoreText: {
+        color: '#d07e69',
+        fontSize: 12,
+        fontWeight: '800',
+        textTransform: 'uppercase',
     },
 });

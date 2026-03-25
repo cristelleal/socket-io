@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { StyleSheet, View, Button, Text } from "react-native";
-import { SocketContext } from '../contexts/socket.context';
-import OnlineGameController from "../controllers/online-game.controller";
+import { View, Text } from "react-native";
+import { SocketContext } from '../../contexts/socket.context';
+import OnlineGameController from "../../controllers/online-game.controller";
+import styles from './online-game.styles';
 
 export default function OnlineGameScreen({ navigation }) {
 
@@ -10,14 +11,14 @@ export default function OnlineGameScreen({ navigation }) {
     return (
         <View style={styles.container}>
             {!socket && (
-                <>
+                <View style={styles.stateCard}>
                     <Text style={styles.paragraph}>
                         No connection with server...
                     </Text>
                     <Text style={styles.footnote}>
                         Restart the app and wait for the server to be back again.
                     </Text>
-                </>
+                </View>
             )}
 
             {socket && (
@@ -26,12 +27,3 @@ export default function OnlineGameScreen({ navigation }) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    }
-});

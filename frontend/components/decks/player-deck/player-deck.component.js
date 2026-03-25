@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import { SocketContext } from "../../../../contexts/socket.context";
-import useSocketEvent from "../../../../hooks/useSocketEvent";
+import { SocketContext } from "../../../contexts/socket.context";
+import useSocketEvent from "../../../hooks/useSocketEvent";
 import Dice from "../dice/dice.component";
 import styles from './player-deck.styles';
 

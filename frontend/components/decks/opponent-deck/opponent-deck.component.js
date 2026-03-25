@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View } from "react-native";
-import useSocketEvent from "../../../../hooks/useSocketEvent";
+import useSocketEvent from "../../../hooks/useSocketEvent";
 import Dice from "../dice/dice.component";
 import styles from './opponent-deck.styles';
 

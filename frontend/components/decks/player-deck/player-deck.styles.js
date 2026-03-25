@@ -6,7 +6,8 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderBottomWidth: 1,
-        borderColor: "black"
+        borderColor: "#e6dac7",
+        backgroundColor: '#fdfaf5',
     },
     rollInfoContainer: {
         marginBottom: 10,
@@ -14,6 +15,7 @@ export default StyleSheet.create({
     rollInfoText: {
         fontSize: 14,
         fontStyle: "italic",
+        color: '#6c7f91',
     },
     diceContainer: {
         flexDirection: "row",
@@ -24,14 +26,16 @@ export default StyleSheet.create({
     rollButton: {
         width: "30%",
         paddingVertical: 10,
-        borderRadius: 5,
+        borderRadius: 8,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "black"
+        backgroundColor: "#cfe5f4",
+        borderWidth: 1,
+        borderColor: '#aacbdf',
     },
     rollButtonText: {
         fontSize: 18,
-        color: "white",
+        color: "#304255",
         fontWeight: "bold",
     },
 });
