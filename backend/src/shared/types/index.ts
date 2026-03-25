@@ -29,6 +29,7 @@ export interface Deck {
 export interface Choices {
   isDefi: boolean;
   isSec: boolean;
+  isYamPredatorMode: boolean;
   idSelectedChoice: string | null;
   availableChoices: Combination[];
 }
@@ -38,6 +39,8 @@ export interface GameState {
   timer: number;
   player1Score: number;
   player2Score: number;
+  player1PiecesLeft: number;
+  player2PiecesLeft: number;
   deck: Deck;
   choices: Choices;
   grid: Cell[][];
@@ -48,4 +51,5 @@ export interface Game {
   player1Socket: Socket;
   player2Socket: Socket;
   gameState: GameState;
+  intervalId: ReturnType<typeof setInterval> | null;
 }

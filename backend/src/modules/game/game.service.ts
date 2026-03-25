@@ -1,156 +1,31 @@
 import { Cell, Choices, Combination, Deck, Dice, Game, GameState, PlayerKey } from '../../shared/types';
-
-const TURN_DURATION = 30;
-
-const DECK_INIT: Deck = {
-  dices: [
-    { id: 1, value: '', locked: true },
-    { id: 2, value: '', locked: true },
-    { id: 3, value: '', locked: true },
-    { id: 4, value: '', locked: true },
-    { id: 5, value: '', locked: true },
-  ],
-  rollsCounter: 1,
-  rollsMaximum: 3,
-};
-
-const CHOICES_INIT: Choices = {
-  isDefi: false,
-  isSec: false,
-  idSelectedChoice: null,
-  availableChoices: [],
-};
-
-const ALL_COMBINATIONS: Combination[] = [
-  { value: 'Brelan1', id: 'brelan1' },
-  { value: 'Brelan2', id: 'brelan2' },
-  { value: 'Brelan3', id: 'brelan3' },
-  { value: 'Brelan4', id: 'brelan4' },
-  { value: 'Brelan5', id: 'brelan5' },
-  { value: 'Brelan6', id: 'brelan6' },
-  { value: 'Full', id: 'full' },
-  { value: 'Carré', id: 'carre' },
-  { value: 'Yam', id: 'yam' },
-  { value: 'Suite', id: 'suite' },
-  { value: '≤8', id: 'moinshuit' },
-  { value: 'Sec', id: 'sec' },
-  { value: 'Défi', id: 'defi' },
-];
-
-const GRID_INIT: Cell[][] = [
-  [
-    { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
-    { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
-    { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
-    { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
-    { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
-  ],
-  [
-    { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
-    { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
-    { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
-    { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
-    { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
-  ],
-  [
-    { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
-    { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
-    { viewContent: 'Yam', id: 'yam', owner: null, canBeChecked: false },
-    { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
-    { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
-  ],
-  [
-    { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
-    { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
-    { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
-    { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
-    { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
-  ],
-  [
-    { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
-    { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
-    { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
-    { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
-    { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
-  ],
-];
-
-// ------------------------------------
-// -------- HELPERS -------------------
-// ------------------------------------
-
-const getSocket = (playerKey: PlayerKey, game: Game) =>
-  playerKey === 'player:1' ? game.player1Socket : game.player2Socket;
-
-const getOpponentSocket = (playerKey: PlayerKey, game: Game) =>
-  playerKey === 'player:1' ? game.player2Socket : game.player1Socket;
-
-const rollDice = (): string => String(Math.floor(Math.random() * 6) + 1);
-
-interface DiceAnalysis {
-  counts: number[];
-  sum: number;
-  hasPair: boolean;
-  hasThreeOfAKind: boolean;
-  threeOfAKindValue: number | null;
-  hasFourOfAKind: boolean;
-  hasFiveOfAKind: boolean;
-  hasStraight: boolean;
-}
-
-const analyzeDices = (dices: Dice[]): DiceAnalysis => {
-  const counts = Array(7).fill(0) as number[];
-  let sum = 0;
-
-  for (const dice of dices) {
-    const val = parseInt(dice.value);
-    counts[val]++;
-    sum += val;
-  }
-
-  let hasPair = false;
-  let hasThreeOfAKind = false;
-  let threeOfAKindValue: number | null = null;
-  let hasFourOfAKind = false;
-  let hasFiveOfAKind = false;
-
-  for (let i = 1; i <= 6; i++) {
-    if (counts[i] >= 2) hasPair = true;
-    if (counts[i] >= 3) { hasThreeOfAKind = true; threeOfAKindValue = i; }
-    if (counts[i] >= 4) hasFourOfAKind = true;
-    if (counts[i] >= 5) hasFiveOfAKind = true;
-  }
-
-  const sortedValues = dices.map(d => parseInt(d.value)).sort((a, b) => a - b);
-  const hasStraight = sortedValues.every((v, i) => i === 0 || v === sortedValues[i - 1] + 1);
-
-  return { counts, sum, hasPair, hasThreeOfAKind, threeOfAKindValue, hasFourOfAKind, hasFiveOfAKind, hasStraight };
-};
-
-// ------------------------------------
-// -------- SERVICE -------------------
-// ------------------------------------
+import { TURN_DURATION, PIECES_PER_PLAYER, DECK_INIT, CHOICES_INIT, GRID_INIT, ALL_COMBINATIONS, SEC_COMBINATION, ALIGNMENT_DIRECTIONS } from './game.constants';
+import { rollDice, analyzeDices, getSocket, getOpponentSocket } from './game.helpers';
 
 export const GameService = {
 
   init: {
-    gameState: (): { gameState: GameState } => ({
-      gameState: {
-        currentTurn: 'player:1',
-        timer: TURN_DURATION,
-        player1Score: 0,
-        player2Score: 0,
-        deck: { ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) },
-        choices: { ...CHOICES_INIT },
-        grid: GRID_INIT.map(row => row.map(cell => ({ ...cell }))),
-      },
-    }),
-
     deck: (): Deck => ({ ...DECK_INIT, dices: DECK_INIT.dices.map(d => ({ ...d })) }),
 
     choices: (): Choices => ({ ...CHOICES_INIT }),
 
     grid: (): Cell[][] => GRID_INIT.map(row => row.map(cell => ({ ...cell }))),
+
+    gameState: function (): { gameState: GameState } {
+      return {
+        gameState: {
+          currentTurn: 'player:1',
+          timer: TURN_DURATION,
+          player1Score: 0,
+          player2Score: 0,
+          player1PiecesLeft: PIECES_PER_PLAYER,
+          player2PiecesLeft: PIECES_PER_PLAYER,
+          deck: this.deck(),
+          choices: this.choices(),
+          grid: this.grid(),
+        },
+      };
+    },
   },
 
   send: {
@@ -172,13 +47,25 @@ export const GameService = {
         };
       },
 
-      gridViewState: (playerKey: PlayerKey, gameState: GameState) => ({
-        displayGrid: true,
-        canSelectCells:
-          playerKey === gameState.currentTurn &&
-          gameState.choices.availableChoices.length > 0,
-        grid: gameState.grid,
-      }),
+      gridViewState: (playerKey: PlayerKey, gameState: GameState) => {
+        const isMyTurn = playerKey === gameState.currentTurn;
+        return {
+          displayGrid: true,
+          canSelectCells: isMyTurn && gameState.choices.availableChoices.length > 0 && !gameState.choices.isYamPredatorMode,
+          canRemoveOpponentCells: isMyTurn && gameState.choices.isYamPredatorMode,
+          grid: gameState.grid,
+        };
+      },
+
+      scoreViewState: (playerKey: PlayerKey, gameState: GameState) => {
+        const isPlayer1 = playerKey === 'player:1';
+        return {
+          myScore: isPlayer1 ? gameState.player1Score : gameState.player2Score,
+          opponentScore: isPlayer1 ? gameState.player2Score : gameState.player1Score,
+          myPiecesLeft: isPlayer1 ? gameState.player1PiecesLeft : gameState.player2PiecesLeft,
+          opponentPiecesLeft: isPlayer1 ? gameState.player2PiecesLeft : gameState.player1PiecesLeft,
+        };
+      },
 
       deckViewState: (playerKey: PlayerKey, gameState: GameState) => ({
         displayPlayerDeck: gameState.currentTurn === playerKey,
@@ -216,25 +103,22 @@ export const GameService = {
   choices: {
     findCombinations: (dices: Dice[], isDefi: boolean, isSec: boolean): Combination[] => {
       const { sum, hasPair, hasThreeOfAKind, threeOfAKindValue, hasFourOfAKind, hasFiveOfAKind, hasStraight } = analyzeDices(dices);
-      const isLessThanEqual8 = sum <= 8;
 
-      const availableCombinations = ALL_COMBINATIONS.filter(combination =>
-        (combination.id.includes('brelan') && hasThreeOfAKind && parseInt(combination.id.slice(-1)) === threeOfAKindValue) ||
-        (combination.id === 'full' && hasPair && hasThreeOfAKind) ||
-        (combination.id === 'carre' && hasFourOfAKind) ||
-        (combination.id === 'yam' && hasFiveOfAKind) ||
-        (combination.id === 'suite' && hasStraight) ||
-        (combination.id === 'moinshuit' && isLessThanEqual8) ||
-        (combination.id === 'defi' && isDefi)
+      const available = ALL_COMBINATIONS.filter(c =>
+        (c.id.startsWith('brelan') && hasThreeOfAKind && parseInt(c.id.slice(-1)) === threeOfAKindValue) ||
+        (c.id === 'full' && hasPair && hasThreeOfAKind) ||
+        (c.id === 'carre' && hasFourOfAKind) ||
+        (c.id === 'yam' && hasFiveOfAKind) ||
+        (c.id === 'suite' && hasStraight) ||
+        (c.id === 'moinshuit' && sum <= 8) ||
+        (c.id === 'defi' && isDefi)
       );
 
-      const notOnlyBrelan = availableCombinations.some(c => !c.id.includes('brelan'));
-      if (isSec && availableCombinations.length > 0 && notOnlyBrelan) {
-        const sec = ALL_COMBINATIONS.find(c => c.id === 'sec');
-        if (sec) availableCombinations.push(sec);
+      if (isSec && available.length > 0 && available.some(c => !c.id.startsWith('brelan'))) {
+        available.push(SEC_COMBINATION);
       }
 
-      return availableCombinations;
+      return available;
     },
   },
 
@@ -251,13 +135,7 @@ export const GameService = {
         )
       ),
 
-    selectCell: (
-      idCell: string,
-      rowIndex: number,
-      cellIndex: number,
-      currentTurn: PlayerKey,
-      grid: Cell[][]
-    ): Cell[][] =>
+    selectCell: (idCell: string, rowIndex: number, cellIndex: number, currentTurn: PlayerKey, grid: Cell[][]): Cell[][] =>
       grid.map((row, rIdx) =>
         row.map((cell, cIdx) =>
           cell.id === idCell && rIdx === rowIndex && cIdx === cellIndex
@@ -266,10 +144,62 @@ export const GameService = {
         )
       ),
 
+    removeCell: (rowIndex: number, cellIndex: number, grid: Cell[][]): Cell[][] =>
+      grid.map((row, rIdx) =>
+        row.map((cell, cIdx) =>
+          rIdx === rowIndex && cIdx === cellIndex
+            ? { ...cell, owner: null, canBeChecked: false }
+            : cell
+        )
+      ),
+
     isAnyCombinationAvailableOnGridForPlayer: (gameState: GameState): boolean => {
       const availableIds = new Set(gameState.choices.availableChoices.map(c => c.id));
       return gameState.grid.flat().some(cell => cell.owner === null && availableIds.has(cell.id));
     },
+  },
+
+  score: {
+    checkAlignments: (playerKey: PlayerKey, grid: Cell[][]): { points: number; isInstantWin: boolean } => {
+      const getLine = (r: number, c: number, dr: number, dc: number): Cell[] => {
+        const line: Cell[] = [];
+        while (r >= 0 && r < 5 && c >= 0 && c < 5) {
+          line.push(grid[r][c]);
+          r += dr; c += dc;
+        }
+        return line;
+      };
+
+      const longestRun = (line: Cell[]): number => {
+        let max = 0, cur = 0;
+        for (const cell of line) {
+          cur = cell.owner === playerKey ? cur + 1 : 0;
+          max = Math.max(max, cur);
+        }
+        return max;
+      };
+
+      const lines: Cell[][] = [
+        ...grid,                                               // horizontales
+        ...[0, 1, 2, 3, 4].map(c => grid.map(row => row[c])), // verticales
+        ...[0, 1, 2].map(c => getLine(0, c, 1, 1)),           // diagonales \  depuis la ligne 0
+        ...[1, 2].map(r => getLine(r, 0, 1, 1)),              // diagonales \  depuis la colonne 0
+        ...[2, 3, 4].map(c => getLine(0, c, 1, -1)),          // diagonales /  depuis la ligne 0
+        ...[1, 2].map(r => getLine(r, 4, 1, -1)),             // diagonales /  depuis la colonne 4
+      ];
+
+      const maxAlignment = Math.max(...lines.map(longestRun));
+
+      if (maxAlignment >= 5) return { points: 0, isInstantWin: true };
+      if (maxAlignment === 4) return { points: 2, isInstantWin: false };
+      if (maxAlignment === 3) return { points: 1, isInstantWin: false };
+      return { points: 0, isInstantWin: false };
+    },
+
+    checkWinByPiecesOut: (gameState: GameState): boolean =>
+      gameState.player1PiecesLeft === 0 || gameState.player2PiecesLeft === 0,
+
+    canUseYamPredator: (dices: Dice[]): boolean => analyzeDices(dices).hasFiveOfAKind,
   },
 
   utils: {

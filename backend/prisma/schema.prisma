@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EndReason {
+  ALIGNMENT
+  PIECES_OUT
+  TIMEOUT
+  DISCONNECT
+}
+
+model GameResult {
+  id           Int       @id @default(autoincrement())
+  playedAt     DateTime  @default(now())
+  player1Id    String
+  player2Id    String
+  player1Score Int
+  player2Score Int
+  winner       String
+  endReason    EndReason
+}

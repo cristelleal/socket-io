@@ -1,4 +1,4 @@
-import { Game } from '../../shared/types';
+import { Game, PlayerKey } from '../../shared/types';
 import { GameService } from './game.service';
 
 export const updateClientsViewTimers = (game: Game): void => {
@@ -25,4 +25,15 @@ export const updateClientsViewGrid = (game: Game): void => {
     game.player1Socket.emit('game.grid.view-state', GameService.send.forPlayer.gridViewState('player:1', game.gameState));
     game.player2Socket.emit('game.grid.view-state', GameService.send.forPlayer.gridViewState('player:2', game.gameState));
   }, 200);
+};
+
+export const updateClientsViewScores = (game: Game): void => {
+  game.player1Socket.emit('game.score.view-state', GameService.send.forPlayer.scoreViewState('player:1', game.gameState));
+  game.player2Socket.emit('game.score.view-state', GameService.send.forPlayer.scoreViewState('player:2', game.gameState));
+};
+
+export const emitGameEnd = (game: Game, winnerKey: PlayerKey, reason: string): void => {
+  const winnerId = winnerKey === 'player:1' ? game.player1Socket.id : game.player2Socket.id;
+  game.player1Socket.emit('game.end', { winnerId, reason });
+  game.player2Socket.emit('game.end', { winnerId, reason });
 };

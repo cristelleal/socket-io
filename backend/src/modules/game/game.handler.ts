@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io';
 import { games } from '../../shared/state';
 import { GameService } from './game.service';
-import { updateClientsViewDecks, updateClientsViewChoices, updateClientsViewGrid } from './game.emitter';
-import { endTurn } from './game.actions';
+import { updateClientsViewDecks, updateClientsViewChoices, updateClientsViewGrid, updateClientsViewScores } from './game.emitter';
+import { endTurn, endGame } from './game.actions';
 
 export const registerGameHandlers = (socket: Socket): void => {
 
@@ -24,6 +24,7 @@ export const registerGameHandlers = (socket: Socket): void => {
 
     const isSec = deck.rollsCounter === 2;
     game.gameState.choices.availableChoices = GameService.choices.findCombinations(deck.dices, false, isSec);
+    game.gameState.choices.isYamPredatorMode = GameService.score.canUseYamPredator(deck.dices);
 
     updateClientsViewDecks(game);
     updateClientsViewChoices(game);
@@ -58,18 +59,59 @@ export const registerGameHandlers = (socket: Socket): void => {
     if (gameIndex === -1) return;
 
     const game = games[gameIndex];
+    const currentTurn = game.gameState.currentTurn;
+
     game.gameState.grid = GameService.grid.resetCanBeCheckedCells(game.gameState.grid);
     game.gameState.grid = GameService.grid.selectCell(
       data.cellId,
       data.rowIndex,
       data.cellIndex,
-      game.gameState.currentTurn,
+      currentTurn,
       game.gameState.grid
     );
 
-    // TODO: Calculer le score
-    // TODO: Vérifier les conditions de victoire (lignes / diagonales / grille pleine)
+    if (currentTurn === 'player:1') game.gameState.player1PiecesLeft--;
+    else game.gameState.player2PiecesLeft--;
 
+    const { points, isInstantWin } = GameService.score.checkAlignments(currentTurn, game.gameState.grid);
+
+    if (isInstantWin) {
+      endGame(game, currentTurn, 'ALIGNMENT');
+      return;
+    }
+
+    if (points > 0) {
+      if (currentTurn === 'player:1') game.gameState.player1Score += points;
+      else game.gameState.player2Score += points;
+      updateClientsViewScores(game);
+    }
+
+    if (GameService.score.checkWinByPiecesOut(game.gameState)) {
+      const winnerKey = game.gameState.player1Score >= game.gameState.player2Score ? 'player:1' : 'player:2';
+      endGame(game, winnerKey, 'PIECES_OUT');
+      return;
+    }
+
+    endTurn(game);
+  });
+
+  socket.on('game.grid.remove', (data: { rowIndex: number; cellIndex: number }) => {
+    const gameIndex = GameService.utils.findGameIndexBySocketId(games, socket.id);
+    if (gameIndex === -1) return;
+
+    const game = games[gameIndex];
+    if (!game.gameState.choices.isYamPredatorMode) return;
+
+    game.gameState.grid = GameService.grid.removeCell(data.rowIndex, data.cellIndex, game.gameState.grid);
+
+    const opponent = game.gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
+    if (opponent === 'player:1') game.gameState.player1PiecesLeft++;
+    else game.gameState.player2PiecesLeft++;
+
+    game.gameState.choices.isYamPredatorMode = false;
+
+    updateClientsViewGrid(game);
+    updateClientsViewScores(game);
     endTurn(game);
   });
 };

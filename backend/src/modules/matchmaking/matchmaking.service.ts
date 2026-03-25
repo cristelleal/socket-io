@@ -4,13 +4,14 @@ import { games, queue } from '../../shared/state';
 import { Game } from '../../shared/types';
 import { GameService } from '../game/game.service';
 import { updateClientsViewTimers, updateClientsViewDecks, updateClientsViewGrid } from '../game/game.emitter';
-import { endTurn } from '../game/game.actions';
+import { endTurn, endGame } from '../game/game.actions';
 
 const createGame = (player1Socket: Socket, player2Socket: Socket): void => {
   const newGame: Game = {
     idGame: randomUUID(),
     player1Socket,
     player2Socket,
+    intervalId: null,
     ...GameService.init.gameState(),
   };
 
@@ -25,7 +26,7 @@ const createGame = (player1Socket: Socket, player2Socket: Socket): void => {
   updateClientsViewDecks(game);
   updateClientsViewGrid(game);
 
-  const gameInterval = setInterval(() => {
+  game.intervalId = setInterval(() => {
     game.gameState.timer--;
     updateClientsViewTimers(game);
 
@@ -34,14 +35,8 @@ const createGame = (player1Socket: Socket, player2Socket: Socket): void => {
     }
   }, 1000);
 
-  const cleanup = () => {
-    clearInterval(gameInterval);
-    const idx = GameService.utils.findGameIndexById(games, game.idGame);
-    if (idx !== -1) games.splice(idx, 1);
-  };
-
-  player1Socket.on('disconnect', cleanup);
-  player2Socket.on('disconnect', cleanup);
+  player1Socket.on('disconnect', () => endGame(game, 'player:2', 'DISCONNECT'));
+  player2Socket.on('disconnect', () => endGame(game, 'player:1', 'DISCONNECT'));
 };
 
 export const newPlayerInQueue = (socket: Socket): void => {
