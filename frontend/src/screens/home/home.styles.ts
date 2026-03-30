@@ -31,11 +31,12 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 40,
+    paddingHorizontal: 40,
   },
   desktopCard: {
     width: '100%',
     maxWidth: 560,
+    maxHeight: '90%',
     backgroundColor: COLORS.surface,
     borderRadius: 24,
     overflow: 'hidden',
@@ -60,7 +61,7 @@ export default StyleSheet.create({
 
   // Branding
   eyebrow: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 4,
@@ -69,7 +70,7 @@ export default StyleSheet.create({
     marginBottom: 8,
   },
   titleYam: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 72,
     fontWeight: '800',
     lineHeight: 66,
@@ -77,7 +78,7 @@ export default StyleSheet.create({
     color: COLORS.onSurface,
   },
   titleMaster: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 72,
     fontWeight: '800',
     lineHeight: 66,
@@ -85,7 +86,7 @@ export default StyleSheet.create({
     color: COLORS.tertiary,
   },
   tagline: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 22,
@@ -148,7 +149,7 @@ export default StyleSheet.create({
     gap: 4,
   },
   menuItemCode: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 3,
@@ -156,7 +157,7 @@ export default StyleSheet.create({
     textTransform: 'uppercase',
   },
   menuItemLabel: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: -0.5,
@@ -178,7 +179,7 @@ export default StyleSheet.create({
     backgroundColor: COLORS.outlineVariant,
   },
   footerText: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 9,
     fontWeight: '700',
     letterSpacing: 4,
@@ -217,7 +218,7 @@ export default StyleSheet.create({
     backgroundColor: COLORS.secondaryContainer,
   },
   navLabel: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 2,

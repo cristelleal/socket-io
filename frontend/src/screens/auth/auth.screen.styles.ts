@@ -75,7 +75,7 @@ export default StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   logoLabel: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 3,
@@ -88,7 +88,7 @@ export default StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 48,
     fontWeight: '800',
     color: COLORS.onSurface,
@@ -96,7 +96,7 @@ export default StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 10,
     fontWeight: '600',
     letterSpacing: 4,
@@ -132,7 +132,7 @@ export default StyleSheet.create({
     elevation: 3,
   },
   modeButtonText: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 14,
     fontWeight: '700',
     color: COLORS.onSurfaceSubtle,
@@ -171,13 +171,13 @@ export default StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_400Regular',
     fontSize: 15,
     color: COLORS.onSurface,
     paddingVertical: 18,
   },
   inputHint: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 9,
     fontWeight: '700',
     letterSpacing: 2,
@@ -187,7 +187,7 @@ export default StyleSheet.create({
 
   // Error
   error: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
     color: COLORS.error,
     paddingHorizontal: 4,
@@ -210,7 +210,7 @@ export default StyleSheet.create({
     elevation: 4,
   },
   buttonText: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Inter_700Bold',
     fontSize: 13,
     fontWeight: '700',
     letterSpacing: 3,
