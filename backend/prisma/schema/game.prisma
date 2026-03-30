@@ -1,0 +1,25 @@
+enum EndReason {
+  ALIGNMENT
+  PIECES_OUT
+  TIMEOUT
+  DISCONNECT
+}
+
+model GameResult {
+  id           Int       @id @default(autoincrement())
+  playedAt     DateTime  @default(now())
+  player1Score Int
+  player2Score Int
+  winner       String
+  endReason    EndReason
+
+  // Socket IDs at time of game (always present)
+  player1SocketId String
+  player2SocketId String
+
+  // User accounts (null for guests, set once auth is wired into the game flow)
+  player1UserId String?
+  player2UserId String?
+  player1       User?   @relation("player1", fields: [player1UserId], references: [id])
+  player2       User?   @relation("player2", fields: [player2UserId], references: [id])
+}
