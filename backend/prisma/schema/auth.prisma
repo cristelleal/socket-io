@@ -6,7 +6,8 @@ model User {
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
-  username      String?   @unique
+  username        String?   @unique
+  displayUsername String?
 
   sessions       Session[]
   accounts       Account[]
