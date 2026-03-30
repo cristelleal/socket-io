@@ -1,11 +1,13 @@
 import { useEffect, useState, useContext } from 'react';
 import { Text, View } from 'react-native';
 import { SocketContext } from '../../shared/contexts/socket.context';
+import { useAuth } from '../../shared/contexts/auth.context';
 import Board from '../../components/board/board.component';
 import styles from './online-game.controller.styles';
 
 const OnlineGameController = () => {
   const socket = useContext(SocketContext);
+  const { session } = useAuth();
 
   const [inQueue, setInQueue] = useState(false);
   const [inGame, setInGame] = useState(false);
@@ -13,8 +15,9 @@ const OnlineGameController = () => {
   useEffect(() => {
     if (!socket) return;
 
-    console.log('[emit][queue.join]:', socket.id);
-    socket.emit('queue.join');
+    const userId = session?.user?.id;
+    console.log('[emit][queue.join]:', socket.id, '(userId:', userId ?? 'anonymous', ')');
+    socket.emit('queue.join', { userId });
     setInQueue(false);
     setInGame(false);
 

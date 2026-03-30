@@ -2,6 +2,11 @@ import { Socket } from 'socket.io';
 
 export type PlayerKey = 'player:1' | 'player:2';
 
+export interface Player {
+  socket: Socket;
+  userId?: string;
+}
+
 export interface Dice {
   id: number;
   value: string;
@@ -48,8 +53,8 @@ export interface GameState {
 
 export interface Game {
   idGame: string;
-  player1Socket: Socket;
-  player2Socket: Socket;
+  player1: Player;
+  player2: Player;
   gameState: GameState;
   intervalId: ReturnType<typeof setInterval> | null;
 }

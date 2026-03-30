@@ -1,5 +1,4 @@
-import { Game } from '../types';
-import { Socket } from 'socket.io';
+import { Game, Player } from '../types';
 
 export const games: Game[] = [];
-export const queue: Socket[] = [];
+export const queue: Player[] = [];

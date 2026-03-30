@@ -26,11 +26,13 @@ export const endGame = async (game: Game, winnerKey: PlayerKey, endReason: GameR
   emitGameEnd(game, winnerKey, endReason);
 
   const result: GameResultInput = {
-    player1SocketId: game.player1Socket.id,
-    player2SocketId: game.player2Socket.id,
+    player1SocketId: game.player1.socket.id,
+    player2SocketId: game.player2.socket.id,
+    player1UserId: game.player1.userId,
+    player2UserId: game.player2.userId,
     player1Score: game.gameState.player1Score,
     player2Score: game.gameState.player2Score,
-    winner: winnerKey === 'player:1' ? game.player1Socket.id : game.player2Socket.id,
+    winner: winnerKey === 'player:1' ? game.player1.socket.id : game.player2.socket.id,
     endReason,
   };
 

@@ -29,9 +29,9 @@ const AppNavigator = () => {
     >
       {session ? (
         <>
-          <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Yam Master' }} />
-          <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} options={{ title: 'Online Game' }} />
-          <Stack.Screen name="VsBotGameScreen" component={VsBotGameScreen} options={{ title: 'Vs Bot' }} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="VsBotGameScreen" component={VsBotGameScreen} options={{ headerShown: false }} />
         </>
       ) : (
         <Stack.Screen name="AuthScreen" component={AuthScreen} options={{ headerShown: false }} />

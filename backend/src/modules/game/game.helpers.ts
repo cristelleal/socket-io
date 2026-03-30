@@ -45,7 +45,7 @@ export const analyzeDices = (dices: Dice[]): DiceAnalysis => {
 };
 
 export const getSocket = (playerKey: PlayerKey, game: Game) =>
-  playerKey === 'player:1' ? game.player1Socket : game.player2Socket;
+  (playerKey === 'player:1' ? game.player1 : game.player2).socket;
 
 export const getOpponentSocket = (playerKey: PlayerKey, game: Game) =>
-  playerKey === 'player:1' ? game.player2Socket : game.player1Socket;
+  (playerKey === 'player:1' ? game.player2 : game.player1).socket;

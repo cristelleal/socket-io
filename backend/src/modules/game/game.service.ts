@@ -207,7 +207,7 @@ export const GameService = {
       games.findIndex(g => g.idGame === idGame),
 
     findGameIndexBySocketId: (games: Game[], socketId: string): number =>
-      games.findIndex(g => g.player1Socket.id === socketId || g.player2Socket.id === socketId),
+      games.findIndex(g => g.player1.socket.id === socketId || g.player2.socket.id === socketId),
 
     findDiceIndexByDiceId: (dices: Dice[], idDice: number): number =>
       dices.findIndex(d => d.id === idDice),
