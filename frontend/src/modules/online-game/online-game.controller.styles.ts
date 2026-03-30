@@ -3,22 +3,24 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fffaf2',
+    backgroundColor: '#F9F9F9',
+  },
+  stateCard: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    padding: 8,
+    padding: 24,
   },
   paragraph: {
+    fontFamily: 'Inter_700Bold',
+    color: '#2F3334',
     fontSize: 16,
-    color: '#304255',
-    backgroundColor: '#ffffff',
-    borderColor: '#e6dac7',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    fontWeight: '600',
+    marginBottom: 8,
+  },
+  footnote: {
+    fontFamily: 'Inter_400Regular',
+    color: '#9BA0A0',
+    fontSize: 13,
+    textAlign: 'center',
   },
 });

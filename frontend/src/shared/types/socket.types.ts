@@ -22,7 +22,7 @@ export interface Cell {
 
 export interface ServerToClientEvents {
   'queue.added': (data: { inQueue: boolean; inGame: boolean }) => void;
-  'game.start': (data: { inQueue: boolean; inGame: boolean; idPlayer: string; idOpponent: string }) => void;
+  'game.start': (data: { inQueue: boolean; inGame: boolean; idPlayer: string; idOpponent: string; playerUsername: string; opponentUsername: string }) => void;
   'game.timer': (data: { playerTimer: number; opponentTimer: number }) => void;
   'game.deck.view-state': (data: {
     displayPlayerDeck: boolean;
@@ -54,7 +54,7 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  'queue.join': () => void;
+  'queue.join': (data: { userId?: string; username?: string }) => void;
   'game.dices.roll': () => void;
   'game.dices.lock': (idDice: number) => void;
   'game.choices.selected': (data: { choiceId: string }) => void;

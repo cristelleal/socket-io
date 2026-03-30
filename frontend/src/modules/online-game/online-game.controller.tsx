@@ -11,26 +11,34 @@ const OnlineGameController = () => {
 
   const [inQueue, setInQueue] = useState(false);
   const [inGame, setInGame] = useState(false);
+  const [playerUsername, setPlayerUsername] = useState('');
+  const [opponentUsername, setOpponentUsername] = useState('');
 
   useEffect(() => {
     if (!socket) return;
 
     const userId = session?.user?.id;
-    console.log('[emit][queue.join]:', socket.id, '(userId:', userId ?? 'anonymous', ')');
-    socket.emit('queue.join', { userId });
+    const username = session?.user?.name ?? undefined;
+
+    socket.emit('queue.join', { userId, username });
     setInQueue(false);
     setInGame(false);
 
     const onQueueAdded = (data: { inQueue: boolean; inGame: boolean }) => {
-      console.log('[listen][queue.added]:', data);
       setInQueue(data.inQueue);
       setInGame(data.inGame);
     };
 
-    const onGameStart = (data: { inQueue: boolean; inGame: boolean; idOpponent: string }) => {
-      console.log('[listen][game.start]:', data);
+    const onGameStart = (data: {
+      inQueue: boolean;
+      inGame: boolean;
+      playerUsername: string;
+      opponentUsername: string;
+    }) => {
       setInQueue(data.inQueue);
       setInGame(data.inGame);
+      setPlayerUsername(data.playerUsername);
+      setOpponentUsername(data.opponentUsername);
     };
 
     socket.on('queue.added', onQueueAdded);
@@ -45,14 +53,24 @@ const OnlineGameController = () => {
   return (
     <View style={styles.container}>
       {!inQueue && !inGame && (
-        <Text style={styles.paragraph}>Waiting for server datas...</Text>
+        <View style={styles.stateCard}>
+          <Text style={styles.paragraph}>Connexion au serveur...</Text>
+        </View>
       )}
 
       {inQueue && (
-        <Text style={styles.paragraph}>Waiting for another player...</Text>
+        <View style={styles.stateCard}>
+          <Text style={styles.paragraph}>En attente d'un adversaire...</Text>
+          <Text style={styles.footnote}>Vous serez connecté automatiquement.</Text>
+        </View>
       )}
 
-      {inGame && <Board />}
+      {inGame && (
+        <Board
+          playerUsername={playerUsername}
+          opponentUsername={opponentUsername}
+        />
+      )}
     </View>
   );
 };

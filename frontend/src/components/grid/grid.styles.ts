@@ -3,47 +3,57 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   gridContainer: {
     flex: 7,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: '#f9f5ee',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 8,
+    shadowColor: '#2F3334',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+    elevation: 2,
   },
   row: {
-    flexDirection: 'row',
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
   },
   cell: {
-    flexDirection: 'row',
-    flex: 2,
-    width: '100%',
-    height: '100%',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e3d7c5',
-    backgroundColor: '#ffffff',
+    borderColor: 'rgba(175,179,179,0.2)',
+  },
+  cellInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cellText: {
-    fontSize: 12,
-    color: '#304255',
-    fontWeight: '700',
-  },
-  playerOwnedCell: {
-    backgroundColor: '#cfe5f4',
-  },
-  opponentOwnedCell: {
-    backgroundColor: '#f7c5b7',
-  },
-  canBeCheckedCell: {
-    backgroundColor: '#f7f0e4',
+    fontFamily: 'Inter_700Bold',
+    fontSize: 11,
+    color: '#2F3334',
   },
   topBorder: {
     borderTopWidth: 1,
   },
   leftBorder: {
     borderLeftWidth: 1,
+  },
+  // Token colors
+  playerOwnedCell: {
+    backgroundColor: '#E4D7FD',
+  },
+  opponentOwnedCell: {
+    backgroundColor: '#CCEACD',
+  },
+  canBeCheckedCell: {
+    backgroundColor: 'rgba(228,215,253,0.3)',
+    borderWidth: 1,
+    borderColor: 'rgba(100,90,122,0.2)',
+    borderStyle: 'dashed',
+  },
+  emptyCell: {
+    backgroundColor: 'transparent',
   },
 });

@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { SocketContext } from '../../../shared/contexts/socket.context';
 import useSocketEvent from '../../../shared/hooks/useSocketEvent';
 import { Dice as DiceType } from '../../../shared/types/socket.types';
@@ -38,14 +39,6 @@ const PlayerDeck = () => {
     <View style={styles.deckPlayerContainer}>
       {displayPlayerDeck && (
         <>
-          {displayRollButton && (
-            <View style={styles.rollInfoContainer}>
-              <Text style={styles.rollInfoText}>
-                Lancer {rollsCounter} / {rollsMaximum}
-              </Text>
-            </View>
-          )}
-
           <View style={styles.diceContainer}>
             {dices.map((diceData, index) => (
               <Dice
@@ -59,8 +52,10 @@ const PlayerDeck = () => {
           </View>
 
           {displayRollButton && (
-            <TouchableOpacity style={styles.rollButton} onPress={rollDices}>
+            <TouchableOpacity style={styles.rollButton} onPress={rollDices} activeOpacity={0.85}>
+              <Text style={styles.rollInfoText}>{rollsCounter}/{rollsMaximum}</Text>
               <Text style={styles.rollButtonText}>Roll</Text>
+              <Feather name="shuffle" size={14} color="#FDF7FF" />
             </TouchableOpacity>
           )}
         </>

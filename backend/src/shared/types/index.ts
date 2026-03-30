@@ -5,6 +5,7 @@ export type PlayerKey = 'player:1' | 'player:2';
 export interface Player {
   socket: Socket;
   userId?: string;
+  username?: string;
 }
 
 export interface Dice {

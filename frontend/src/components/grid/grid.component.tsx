@@ -33,16 +33,23 @@ const Grid = () => {
                 key={cell.id + String(rowIndex) + String(cellIndex)}
                 style={[
                   styles.cell,
-                  cell.owner === 'player:1' && styles.playerOwnedCell,
-                  cell.owner === 'player:2' && styles.opponentOwnedCell,
-                  cell.canBeChecked && cell.owner === null && styles.canBeCheckedCell,
                   rowIndex !== 0 && styles.topBorder,
                   cellIndex !== 0 && styles.leftBorder,
                 ]}
                 onPress={() => handleSelectCell(cell.id, rowIndex, cellIndex)}
                 disabled={!cell.canBeChecked}
               >
-                <Text style={styles.cellText}>{cell.viewContent}</Text>
+                <View style={[
+                  styles.cellInner,
+                  cell.owner === 'player:1' && styles.playerOwnedCell,
+                  cell.owner === 'player:2' && styles.opponentOwnedCell,
+                  cell.canBeChecked && cell.owner === null && styles.canBeCheckedCell,
+                  !cell.owner && !cell.canBeChecked && styles.emptyCell,
+                ]}>
+                  {cell.viewContent ? (
+                    <Text style={styles.cellText}>{cell.viewContent}</Text>
+                  ) : null}
+                </View>
               </TouchableOpacity>
             ))}
           </View>

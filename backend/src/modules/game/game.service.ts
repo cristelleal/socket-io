@@ -1,6 +1,6 @@
 import { Cell, Choices, Combination, Deck, Dice, Game, GameState, PlayerKey } from '../../shared/types';
 import { TURN_DURATION, PIECES_PER_PLAYER, DECK_INIT, CHOICES_INIT, GRID_INIT, ALL_COMBINATIONS, SEC_COMBINATION } from './game.constants';
-import { rollDice, analyzeDices, getSocket, getOpponentSocket } from './game.helpers';
+import { rollDice, analyzeDices } from './game.helpers';
 
 export const GameService = {
 
@@ -30,12 +30,18 @@ export const GameService = {
 
   send: {
     forPlayer: {
-      viewGameState: (playerKey: PlayerKey, game: Game) => ({
-        inQueue: false,
-        inGame: true,
-        idPlayer: getSocket(playerKey, game).id,
-        idOpponent: getOpponentSocket(playerKey, game).id,
-      }),
+      viewGameState: (playerKey: PlayerKey, game: Game) => {
+        const player = playerKey === 'player:1' ? game.player1 : game.player2;
+        const opponent = playerKey === 'player:1' ? game.player2 : game.player1;
+        return {
+          inQueue: false,
+          inGame: true,
+          idPlayer: player.socket.id,
+          idOpponent: opponent.socket.id,
+          playerUsername: player.username ?? player.socket.id.slice(0, 6),
+          opponentUsername: opponent.username ?? opponent.socket.id.slice(0, 6),
+        };
+      },
 
       viewQueueState: () => ({ inQueue: true, inGame: false }),
 

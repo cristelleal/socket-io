@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import useSocketEvent from '../../../shared/hooks/useSocketEvent';
 import { Dice as DiceType } from '../../../shared/types/socket.types';
 import Dice from '../dice/dice.component';
@@ -19,16 +19,19 @@ const OpponentDeck = () => {
   return (
     <View style={styles.deckOpponentContainer}>
       {displayOpponentDeck && (
-        <View style={styles.diceContainer}>
-          {opponentDices.map((diceData, index) => (
-            <Dice
-              key={index}
-              locked={diceData.locked}
-              value={diceData.value}
-              opponent
-            />
-          ))}
-        </View>
+        <>
+          <Text style={styles.label}>OPP</Text>
+          <View style={styles.diceContainer}>
+            {opponentDices.map((diceData, index) => (
+              <Dice
+                key={index}
+                locked={diceData.locked}
+                value={diceData.value}
+                opponent
+              />
+            ))}
+          </View>
+        </>
       )}
     </View>
   );

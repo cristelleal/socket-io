@@ -5,46 +5,68 @@ import OpponentDeck from '../decks/opponent-deck/opponent-deck.component';
 import PlayerDeck from '../decks/player-deck/player-deck.component';
 import Choices from '../choices/choices.component';
 import Grid from '../grid/grid.component';
-import styles from './board.styles';
+import styles, { COLORS } from './board.styles';
 
-const OpponentInfos = () => (
-  <View style={styles.opponentInfosContainer}>
-    <Text style={styles.infoText}>Adversaire</Text>
+interface BoardProps {
+  playerUsername: string;
+  opponentUsername: string;
+}
+
+const ScoreCard = ({ label, name, scoreKey, timerKey, isOpponent }: {
+  label: string;
+  name: string;
+  scoreKey: 'myScore' | 'opponentScore';
+  timerKey: 'playerTimer' | 'opponentTimer';
+  isOpponent?: boolean;
+}) => (
+  <View style={[styles.scoreCard, isOpponent ? styles.scoreCardOpponent : styles.scoreCardPlayer]}>
+    <View style={styles.scoreCardHeader}>
+      <View>
+        <Text style={styles.scoreCardLabel}>{label}</Text>
+        <Text style={[styles.scoreCardName, isOpponent && styles.scoreCardNameOpponent]}>{name}</Text>
+      </View>
+      {isOpponent && <View style={styles.activeDot} />}
+    </View>
+    <View style={styles.scoreCardPointsRow}>
+      <Score
+        scoreKey={scoreKey}
+        textStyle={[styles.scoreCardPoints, isOpponent && styles.scoreCardPointsOpponent]}
+      />
+      <Text style={styles.scoreCardUnit}>PTS</Text>
+    </View>
+    <Timer timerKey={timerKey} color={isOpponent ? COLORS.secondary : COLORS.primary} />
   </View>
 );
 
-const PlayerInfos = () => (
-  <View style={styles.playerInfosContainer}>
-    <Text style={styles.infoText}>Joueur</Text>
-  </View>
-);
-
-const Board = () => (
+const Board = ({ playerUsername, opponentUsername }: BoardProps) => (
   <View style={styles.container}>
-    <View style={styles.rowInfo}>
-      <OpponentInfos />
-      <View style={styles.opponentTimerScoreContainer}>
-        <Timer timerKey="opponentTimer" />
-        <Score scoreKey="opponentScore" />
-      </View>
+
+    {/* Scoreboard */}
+    <View style={styles.scoreboardRow}>
+      <ScoreCard label="Player 01" name={playerUsername} scoreKey="myScore" timerKey="playerTimer" />
+      <ScoreCard label="Player 02" name={opponentUsername} scoreKey="opponentScore" timerKey="opponentTimer" isOpponent />
     </View>
-    <View style={styles.rowDeck}>
-      <OpponentDeck />
-    </View>
-    <View style={styles.rowMiddle}>
+
+    {/* Grid — full width, takes remaining space */}
+    <View style={styles.gridRow}>
       <Grid />
-      <Choices />
     </View>
-    <View style={styles.rowDeck}>
-      <PlayerDeck />
-    </View>
-    <View style={styles.rowInfo}>
-      <PlayerInfos />
-      <View style={styles.playerTimerScoreContainer}>
-        <Timer timerKey="playerTimer" />
-        <Score scoreKey="myScore" />
+
+    {/* Bottom section */}
+    <View style={styles.bottomSection}>
+      <View style={styles.opponentDeckRow}>
+        <OpponentDeck />
+      </View>
+
+      <View style={styles.choicesRow}>
+        <Choices />
+      </View>
+
+      <View style={styles.playerDeckRow}>
+        <PlayerDeck />
       </View>
     </View>
+
   </View>
 );
 
