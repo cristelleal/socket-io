@@ -1,0 +1,15 @@
+services:
+  backend:
+    networks:
+      - default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.yatzy.rule=Host(`yatzy.puglabz.com`)"
+      - "traefik.http.routers.yatzy.entrypoints=websecure"
+      - "traefik.http.services.yatzy.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

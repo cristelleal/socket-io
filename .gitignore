@@ -6,3 +6,4 @@ node_modules/
 /backend/dist/
 /frontend/node_modules/
 settings.json
+TODO.md

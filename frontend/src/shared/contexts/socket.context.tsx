@@ -1,12 +1,8 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import { io } from 'socket.io-client';
 import { AppSocket } from '../types/socket.types';
 
-const socketEndpoint =
-  Platform.OS === 'web'
-    ? 'http://localhost:3000'
-    : `http://${process.env.EXPO_PUBLIC_SOCKET_ENDPOINT}`;
+const socketEndpoint = process.env.EXPO_PUBLIC_SOCKET_URL ?? 'http://localhost:3000';
 
 export const socket: AppSocket = io(socketEndpoint, {
   transports: ['websocket'],
