@@ -25,4 +25,9 @@ export default StyleSheet.create({
     fontSize: 11,
     color: '#2F3334',
   },
+  defiDeclareButton: {
+    backgroundColor: '#FFF3CD',
+    borderWidth: 1,
+    borderColor: '#F0AD4E',
+  },
 });

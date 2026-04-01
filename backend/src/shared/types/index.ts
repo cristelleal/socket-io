@@ -1,11 +1,13 @@
 import { Socket } from 'socket.io';
 
 export type PlayerKey = 'player:1' | 'player:2';
+export type BotDifficulty = 'easy' | 'medium' | 'hard';
 
 export interface Player {
   socket: Socket;
   userId?: string;
   username?: string;
+  isBot?: boolean;
 }
 
 export interface Dice {
@@ -58,4 +60,6 @@ export interface Game {
   player2: Player;
   gameState: GameState;
   intervalId: ReturnType<typeof setInterval> | null;
+  botDifficulty?: BotDifficulty;
+  botPlayerKey?: PlayerKey;
 }

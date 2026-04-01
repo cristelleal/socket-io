@@ -37,9 +37,10 @@ export const ALL_COMBINATIONS: Combination[] = [
   { value: '≤8', id: 'moinshuit' },
   { value: 'Sec', id: 'sec' },
   { value: 'Défi', id: 'defi' },
-];
+] as const;
 
 export const SEC_COMBINATION = ALL_COMBINATIONS.find(c => c.id === 'sec')!;
+export const DEFI_COMBINATION = ALL_COMBINATIONS.find(c => c.id === 'defi')!;
 
 export const GRID_INIT: Cell[][] = [
   [

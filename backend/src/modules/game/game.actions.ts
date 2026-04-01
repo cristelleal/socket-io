@@ -4,6 +4,14 @@ import { updateClientsViewTimers, updateClientsViewDecks, updateClientsViewChoic
 import { GameRepository, GameResultInput } from './game.repository';
 import { games } from '../../shared/state';
 
+// Callback déclenché quand c'est au tour du bot — évite l'import circulaire
+type BotTurnCallback = (game: Game) => void;
+let _botTurnCallback: BotTurnCallback | null = null;
+
+export const registerBotTurnCallback = (fn: BotTurnCallback): void => {
+  _botTurnCallback = fn;
+};
+
 export const endTurn = (game: Game): void => {
   game.gameState.currentTurn = game.gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
   game.gameState.timer = GameService.timer.getTurnDuration();
@@ -15,6 +23,11 @@ export const endTurn = (game: Game): void => {
   updateClientsViewDecks(game);
   updateClientsViewChoices(game);
   updateClientsViewGrid(game);
+
+  // Si c'est maintenant le tour du bot, on le déclenche
+  if (game.botPlayerKey !== undefined && game.gameState.currentTurn === game.botPlayerKey && _botTurnCallback) {
+    _botTurnCallback(game);
+  }
 };
 
 export const endGame = async (game: Game, winnerKey: PlayerKey, endReason: GameResultInput['endReason']): Promise<void> => {

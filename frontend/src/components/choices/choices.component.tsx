@@ -9,12 +9,14 @@ const Choices = () => {
   const socket = useContext(SocketContext);
   const [displayChoices, setDisplayChoices] = useState(false);
   const [canMakeChoice, setCanMakeChoice] = useState(false);
+  const [canDeclareDefi, setCanDeclareDefi] = useState(false);
   const [idSelectedChoice, setIdSelectedChoice] = useState<string | null>(null);
   const [availableChoices, setAvailableChoices] = useState<Combination[]>([]);
 
   useSocketEvent('game.choices.view-state', (data) => {
     setDisplayChoices(data.displayChoices);
     setCanMakeChoice(data.canMakeChoice);
+    setCanDeclareDefi(data.canDeclareDefi);
     setIdSelectedChoice(data.idSelectedChoice);
     setAvailableChoices(data.availableChoices);
   });
@@ -26,8 +28,20 @@ const Choices = () => {
     }
   };
 
+  const handleDeclareDefi = () => {
+    socket?.emit('game.defi.declare');
+  };
+
   return (
     <View style={styles.choicesContainer}>
+      {canDeclareDefi && (
+        <TouchableOpacity
+          style={[styles.choiceButton, styles.defiDeclareButton]}
+          onPress={handleDeclareDefi}
+        >
+          <Text style={styles.choiceText}>⚔️ Défi</Text>
+        </TouchableOpacity>
+      )}
       {displayChoices &&
         availableChoices.map((choice) => (
           <TouchableOpacity

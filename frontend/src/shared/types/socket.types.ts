@@ -22,7 +22,7 @@ export interface Cell {
 
 export interface ServerToClientEvents {
   'queue.added': (data: { inQueue: boolean; inGame: boolean }) => void;
-  'game.start': (data: { inQueue: boolean; inGame: boolean; idPlayer: string; idOpponent: string; playerUsername: string; opponentUsername: string }) => void;
+  'game.start': (data: { inQueue: boolean; inGame: boolean; myPlayerKey: PlayerOwner; idPlayer: string; idOpponent: string; playerUsername: string; opponentUsername: string }) => void;
   'game.timer': (data: { playerTimer: number; opponentTimer: number }) => void;
   'game.deck.view-state': (data: {
     displayPlayerDeck: boolean;
@@ -37,6 +37,7 @@ export interface ServerToClientEvents {
     canMakeChoice: boolean;
     idSelectedChoice: string | null;
     availableChoices: Combination[];
+    canDeclareDefi: boolean;
   }) => void;
   'game.grid.view-state': (data: {
     displayGrid: boolean;
@@ -55,10 +56,13 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   'queue.join': (data: { userId?: string; username?: string }) => void;
+  'bot.game.start': (data: { difficulty: 'easy' | 'medium' | 'hard'; username?: string }) => void;
   'game.dices.roll': () => void;
   'game.dices.lock': (idDice: number) => void;
+  'game.defi.declare': () => void;
   'game.choices.selected': (data: { choiceId: string }) => void;
   'game.grid.selected': (data: { cellId: string; rowIndex: number; cellIndex: number }) => void;
+  'game.grid.remove': (data: { rowIndex: number; cellIndex: number }) => void;
 }
 
 export type AppSocket = Socket<ServerToClientEvents, ClientToServerEvents>;

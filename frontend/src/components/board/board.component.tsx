@@ -10,6 +10,7 @@ import styles, { COLORS } from './board.styles';
 interface BoardProps {
   playerUsername: string;
   opponentUsername: string;
+  myPlayerKey: 'player:1' | 'player:2' | null;
 }
 
 const ScoreCard = ({ label, name, scoreKey, timerKey, isOpponent }: {
@@ -38,21 +39,18 @@ const ScoreCard = ({ label, name, scoreKey, timerKey, isOpponent }: {
   </View>
 );
 
-const Board = ({ playerUsername, opponentUsername }: BoardProps) => (
+const Board = ({ playerUsername, opponentUsername, myPlayerKey }: BoardProps) => (
   <View style={styles.container}>
 
-    {/* Scoreboard */}
     <View style={styles.scoreboardRow}>
       <ScoreCard label="Player 01" name={playerUsername} scoreKey="myScore" timerKey="playerTimer" />
       <ScoreCard label="Player 02" name={opponentUsername} scoreKey="opponentScore" timerKey="opponentTimer" isOpponent />
     </View>
 
-    {/* Grid — full width, takes remaining space */}
     <View style={styles.gridRow}>
-      <Grid />
+      <Grid myPlayerKey={myPlayerKey} />
     </View>
 
-    {/* Bottom section */}
     <View style={styles.bottomSection}>
       <View style={styles.opponentDeckRow}>
         <OpponentDeck />

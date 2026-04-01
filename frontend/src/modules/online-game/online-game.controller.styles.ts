@@ -22,5 +22,18 @@ export default StyleSheet.create({
     color: '#9BA0A0',
     fontSize: 13,
     textAlign: 'center',
+    marginBottom: 16,
+  },
+  actionButton: {
+    backgroundColor: '#7C3AED',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignSelf: 'center',
+  },
+  actionButtonText: {
+    fontFamily: 'Inter_700Bold',
+    color: '#FFFFFF',
+    fontSize: 14,
   },
 });

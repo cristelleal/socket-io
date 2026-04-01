@@ -2,25 +2,39 @@ import { useContext, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { SocketContext } from '../../shared/contexts/socket.context';
 import useSocketEvent from '../../shared/hooks/useSocketEvent';
-import { Cell } from '../../shared/types/socket.types';
+import { Cell, PlayerOwner } from '../../shared/types/socket.types';
 import styles from './grid.styles';
 
-const Grid = () => {
+interface GridProps {
+  myPlayerKey: PlayerOwner | null;
+}
+
+const Grid = ({ myPlayerKey }: GridProps) => {
   const socket = useContext(SocketContext);
   const [displayGrid, setDisplayGrid] = useState(true);
   const [canSelectCells, setCanSelectCells] = useState(false);
+  const [canRemoveOpponentCells, setCanRemoveOpponentCells] = useState(false);
   const [grid, setGrid] = useState<Cell[][]>([]);
 
   useSocketEvent('game.grid.view-state', (data) => {
     setDisplayGrid(data.displayGrid);
     setCanSelectCells(data.canSelectCells);
+    setCanRemoveOpponentCells(data.canRemoveOpponentCells);
     setGrid(data.grid);
   });
 
-  const handleSelectCell = (cellId: string, rowIndex: number, cellIndex: number) => {
-    if (canSelectCells) {
-      socket?.emit('game.grid.selected', { cellId, rowIndex, cellIndex });
+  const handleCellPress = (cell: Cell, rowIndex: number, cellIndex: number) => {
+    if (canRemoveOpponentCells && cell.owner !== null && cell.owner !== myPlayerKey) {
+      socket?.emit('game.grid.remove', { rowIndex, cellIndex });
+    } else if (canSelectCells && cell.canBeChecked) {
+      socket?.emit('game.grid.selected', { cellId: cell.id, rowIndex, cellIndex });
     }
+  };
+
+  const isCellPressable = (cell: Cell): boolean => {
+    if (canRemoveOpponentCells && cell.owner !== null && cell.owner !== myPlayerKey) return true;
+    if (canSelectCells && cell.canBeChecked) return true;
+    return false;
   };
 
   return (
@@ -36,13 +50,13 @@ const Grid = () => {
                   rowIndex !== 0 && styles.topBorder,
                   cellIndex !== 0 && styles.leftBorder,
                 ]}
-                onPress={() => handleSelectCell(cell.id, rowIndex, cellIndex)}
-                disabled={!cell.canBeChecked}
+                onPress={() => handleCellPress(cell, rowIndex, cellIndex)}
+                disabled={!isCellPressable(cell)}
               >
                 <View style={[
                   styles.cellInner,
-                  cell.owner === 'player:1' && styles.playerOwnedCell,
-                  cell.owner === 'player:2' && styles.opponentOwnedCell,
+                  cell.owner === myPlayerKey && styles.playerOwnedCell,
+                  cell.owner !== null && cell.owner !== myPlayerKey && styles.opponentOwnedCell,
                   cell.canBeChecked && cell.owner === null && styles.canBeCheckedCell,
                   !cell.owner && !cell.canBeChecked && styles.emptyCell,
                 ]}>
