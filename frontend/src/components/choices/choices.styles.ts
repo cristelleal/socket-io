@@ -4,30 +4,34 @@ export default StyleSheet.create({
   choicesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: 7,
   },
   choiceButton: {
-    backgroundColor: '#F2F4F4',
-    borderRadius: 10,
-    paddingVertical: 6,
+    backgroundColor: '#F5F6F6',
+    borderRadius: 12,
+    paddingVertical: 7,
     paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(175,179,179,0.18)',
   },
   selectedChoice: {
     backgroundColor: '#E4D7FD',
+    borderColor: 'rgba(100,90,122,0.28)',
   },
   disabledChoice: {
-    opacity: 0.4,
+    opacity: 0.45,
   },
   choiceText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 11,
+    fontSize: 10,
+    letterSpacing: 0.4,
     color: '#2F3334',
   },
   defiDeclareButton: {
-    backgroundColor: '#FFF3CD',
+    backgroundColor: '#FFF1C9',
     borderWidth: 1,
-    borderColor: '#F0AD4E',
+    borderColor: '#E3A852',
   },
 });

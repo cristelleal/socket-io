@@ -39,33 +39,60 @@ const Grid = ({ myPlayerKey }: GridProps) => {
 
   return (
     <View style={styles.gridContainer}>
+      <View style={styles.gridHeader}>
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={styles.legendDotPlayer} />
+          </View>
+          <View style={styles.legendItem}>
+            <View style={styles.legendDotOpponent} />
+          </View>
+        </View>
+      </View>
+
       {displayGrid &&
         grid.map((row, rowIndex) => (
           <View key={rowIndex} style={styles.row}>
-            {row.map((cell, cellIndex) => (
-              <TouchableOpacity
-                key={cell.id + String(rowIndex) + String(cellIndex)}
-                style={[
-                  styles.cell,
-                  rowIndex !== 0 && styles.topBorder,
-                  cellIndex !== 0 && styles.leftBorder,
-                ]}
-                onPress={() => handleCellPress(cell, rowIndex, cellIndex)}
-                disabled={!isCellPressable(cell)}
-              >
-                <View style={[
-                  styles.cellInner,
-                  cell.owner === myPlayerKey && styles.playerOwnedCell,
-                  cell.owner !== null && cell.owner !== myPlayerKey && styles.opponentOwnedCell,
-                  cell.canBeChecked && cell.owner === null && styles.canBeCheckedCell,
-                  !cell.owner && !cell.canBeChecked && styles.emptyCell,
-                ]}>
-                  {cell.viewContent ? (
-                    <Text style={styles.cellText}>{cell.viewContent}</Text>
-                  ) : null}
-                </View>
-              </TouchableOpacity>
-            ))}
+            {row.map((cell, cellIndex) => {
+              const isPressable = isCellPressable(cell);
+              const isMiddleRow = rowIndex === Math.floor(grid.length / 2);
+              const isMiddleCol = cellIndex === Math.floor(row.length / 2);
+              const isRemovable = canRemoveOpponentCells && cell.owner !== null && cell.owner !== myPlayerKey;
+              const isAltCell = (rowIndex + cellIndex) % 2 === 0;
+
+              return (
+                <TouchableOpacity
+                  key={cell.id + String(rowIndex) + String(cellIndex)}
+                  style={[
+                    styles.cell,
+                    rowIndex !== 0 && styles.topBorder,
+                    cellIndex !== 0 && styles.leftBorder,
+                    isMiddleRow && styles.middleRowLine,
+                    isMiddleCol && styles.middleColLine,
+                    isPressable && styles.pressableCell,
+                  ]}
+                  onPress={() => handleCellPress(cell, rowIndex, cellIndex)}
+                  disabled={!isPressable}
+                  activeOpacity={isPressable ? 0.78 : 1}
+                >
+                  <View
+                    style={[
+                      styles.cellInner,
+                      isAltCell && styles.altCell,
+                      cell.owner === myPlayerKey && styles.playerOwnedCell,
+                      cell.owner !== null && cell.owner !== myPlayerKey && styles.opponentOwnedCell,
+                      cell.canBeChecked && cell.owner === null && styles.canBeCheckedCell,
+                      isRemovable && styles.removableCell,
+                      !cell.owner && !cell.canBeChecked && styles.emptyCell,
+                    ]}
+                  >
+                    {cell.viewContent ? (
+                      <Text style={styles.cellText}>{cell.viewContent}</Text>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         ))}
     </View>

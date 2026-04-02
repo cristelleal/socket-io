@@ -39,7 +39,7 @@ const Choices = () => {
           style={[styles.choiceButton, styles.defiDeclareButton]}
           onPress={handleDeclareDefi}
         >
-          <Text style={styles.choiceText}>⚔️ Défi</Text>
+          <Text style={styles.choiceText}>Defi</Text>
         </TouchableOpacity>
       )}
       {displayChoices &&
