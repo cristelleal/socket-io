@@ -52,17 +52,32 @@ export interface ServerToClientEvents {
     opponentPiecesLeft: number;
   }) => void;
   'game.end': (data: { winnerId: string; reason: string }) => void;
+  'leaderboard.data': (data: {
+    leaderboard: {
+      rank: number;
+      userId: string;
+      displayName: string;
+      totalScore: number;
+      gamesPlayed: number;
+      wins: number;
+      averageScore: number;
+      bestScore: number;
+      lastPlayedAt: string;
+    }[];
+    generatedAt: string;
+  }) => void;
 }
 
 export interface ClientToServerEvents {
   'queue.join': (data: { userId?: string; username?: string }) => void;
-  'bot.game.start': (data: { difficulty: 'easy' | 'medium' | 'hard'; username?: string }) => void;
+  'bot.game.start': (data: { difficulty: 'easy' | 'medium' | 'hard'; userId?: string; username?: string }) => void;
   'game.dices.roll': () => void;
   'game.dices.lock': (idDice: number) => void;
   'game.defi.declare': () => void;
   'game.choices.selected': (data: { choiceId: string }) => void;
   'game.grid.selected': (data: { cellId: string; rowIndex: number; cellIndex: number }) => void;
   'game.grid.remove': (data: { rowIndex: number; cellIndex: number }) => void;
+  'leaderboard.request': (data?: { limit?: number }) => void;
 }
 
 export type AppSocket = Socket<ServerToClientEvents, ClientToServerEvents>;

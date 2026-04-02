@@ -156,8 +156,8 @@ const OnlineGameController = () => {
               </View>
               {cardContent}
             </ScrollView>
-            <BottomNav activeTab="play" />
           </View>
+          <BottomNav activeTab="play" />
         </View>
       </View>
     );

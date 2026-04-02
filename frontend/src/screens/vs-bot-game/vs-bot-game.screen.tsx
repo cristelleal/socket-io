@@ -137,7 +137,11 @@ export default function VsBotGameScreen() {
 
   const startGame = (difficulty: Difficulty) => {
     if (!socket) return;
-    socket.emit("bot.game.start", { difficulty, username: session?.user?.name ?? undefined });
+    socket.emit("bot.game.start", {
+      difficulty,
+      userId: session?.user?.id,
+      username: session?.user?.name ?? undefined,
+    });
   };
 
   const resetScreen = () => {
@@ -187,8 +191,8 @@ export default function VsBotGameScreen() {
           <View style={styles.desktopWrapper}>
             <View style={styles.desktopCard}>
               <View style={styles.resultContainer}>{resultContent}</View>
-              <BottomNav activeTab="play" />
             </View>
+            <BottomNav activeTab="play" />
           </View>
         </View>
       );
@@ -210,8 +214,8 @@ export default function VsBotGameScreen() {
             <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.desktopScroll} showsVerticalScrollIndicator={false}>
               <DifficultyContent onSelect={startGame} />
             </ScrollView>
-            <BottomNav activeTab="play" />
           </View>
+          <BottomNav activeTab="play" />
         </View>
       </View>
     );

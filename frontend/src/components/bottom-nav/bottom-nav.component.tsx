@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +14,8 @@ interface BottomNavProps {
 }
 
 export default function BottomNav({ activeTab, absolute = false }: BottomNavProps) {
+  const isWeb = Platform.OS === 'web';
+  const shouldBeAbsolute = absolute || isWeb;
   const navigation = useNavigation<AppNavigationProp>();
   const { signOut } = useAuth();
   const insets = useSafeAreaInsets();
@@ -25,13 +27,13 @@ export default function BottomNav({ activeTab, absolute = false }: BottomNavProp
     onPress: () => void;
   }[] = [
     { id: 'play',    icon: 'grid',        label: 'Play',     onPress: () => navigation.navigate('HomeScreen') },
-    { id: 'rank',    icon: 'bar-chart-2', label: 'Rank',     onPress: () => {} },
+    { id: 'rank',    icon: 'bar-chart-2', label: 'Rank',     onPress: () => navigation.navigate('RankScreen') },
     { id: 'rules',   icon: 'book-open',   label: 'Rules',    onPress: () => navigation.navigate('RulesScreen') },
     { id: 'signout', icon: 'log-out',     label: 'Sign out', onPress: signOut },
   ];
 
   return (
-    <View style={[styles.wrapper, absolute && styles.wrapperAbsolute, { paddingBottom: insets.bottom + 12 }]}>
+    <View style={[styles.wrapper, shouldBeAbsolute && styles.wrapperAbsolute, { paddingBottom: insets.bottom + 12 }]}>
       <View style={styles.bottomNav}>
         {tabs.map(tab => {
           const isActive = tab.id === activeTab;

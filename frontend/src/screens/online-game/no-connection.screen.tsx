@@ -19,8 +19,8 @@ export default function NoConnectionScreen() {
         <View style={styles.desktopWrapper}>
           <View style={styles.desktopCard}>
             {content}
-            <BottomNav activeTab="play" />
           </View>
+          <BottomNav activeTab="play" />
         </View>
       </View>
     );

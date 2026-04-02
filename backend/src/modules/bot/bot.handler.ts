@@ -35,10 +35,10 @@ const createBotSocket = (id: string): Socket => {
 };
 
 export const registerBotHandlers = (socket: Socket): void => {
-  socket.on('bot.game.start', (data?: { difficulty?: BotDifficulty; username?: string }) => {
+  socket.on('bot.game.start', (data?: { difficulty?: BotDifficulty; userId?: string; username?: string }) => {
     const difficulty: BotDifficulty = data?.difficulty ?? 'medium';
 
-    const humanPlayer: Player = { socket, username: data?.username, isBot: false };
+    const humanPlayer: Player = { socket, userId: data?.userId, username: data?.username, isBot: false };
     const botPlayer: Player = {
       socket: createBotSocket(`bot_${randomUUID().slice(0, 8)}`),
       username: BOT_NAMES[difficulty],

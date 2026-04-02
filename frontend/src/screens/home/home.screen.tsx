@@ -31,7 +31,7 @@ const MENU_ITEMS = [
     code: "ACTION_03",
     label: "Hall of Fame",
     icon: "award" as const,
-    screen: null,
+    screen: "RankScreen" as const,
     style: "secondary" as const,
   },
   {
@@ -81,6 +81,7 @@ const MenuContent = ({
             if (item.screen === "OnlineGameScreen") navigation.navigate("OnlineGameScreen");
             if (item.screen === "VsBotGameScreen") navigation.navigate("VsBotGameScreen");
             if (item.screen === "RulesScreen") navigation.navigate("RulesScreen");
+            if (item.screen === "RankScreen") navigation.navigate("RankScreen");
           }}
         >
           <View style={styles.menuItemLeft}>
@@ -118,8 +119,8 @@ export default function HomeScreen() {
                 username={username}
               />
             </ScrollView>
-            <BottomNav activeTab="play" />
           </View>
+          <BottomNav activeTab="play" />
         </View>
       </View>
     );

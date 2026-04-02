@@ -6,6 +6,7 @@ export type RootStackParamList = {
   OnlineGameScreen: undefined;
   VsBotGameScreen: undefined;
   RulesScreen: undefined;
+  RankScreen: undefined;
 };
 
 declare global {
