@@ -7,62 +7,57 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { SocketContext } from "../../shared/contexts/socket.context";
 import { useAuth } from "../../shared/contexts/auth.context";
 import { AppNavigationProp } from "../../shared/types/navigation.types";
 import Board from "../../components/board/board.component";
 import BottomNav from "../../components/bottom-nav/bottom-nav.component";
-import styles from "./vs-bot-game.styles";
+import styles, { COLORS } from "./vs-bot-game.styles";
 
 type Difficulty = "easy" | "medium" | "hard";
 
-const DIFFICULTY_DATA: {
+const DIFFICULTY_ITEMS: {
   key: Difficulty;
   code: string;
   label: string;
   desc: string;
-  emoji: string;
-  badgeStyle: object;
+  icon: React.ComponentProps<typeof Feather>["name"];
+  style: "primary" | "secondary";
 }[] = [
   {
     key: "easy",
-    code: "01",
-    label: "Facile",
-    desc: "Le bot joue au hasard.",
-    emoji: "🌱",
-    badgeStyle: styles.cardBadgeEasy,
+    code: "DIFF_01",
+    label: "Easy",
+    desc: "The bot plays randomly.",
+    icon: "activity",
+    style: "primary",
   },
   {
     key: "medium",
-    code: "02",
-    label: "Intermédiaire",
-    desc: "Le bot optimise ses combos.",
-    emoji: "⚡",
-    badgeStyle: styles.cardBadgeMedium,
+    code: "DIFF_02",
+    label: "Intermediate",
+    desc: "The bot optimises its combos.",
+    icon: "zap",
+    style: "secondary",
   },
   {
     key: "hard",
-    code: "03",
+    code: "DIFF_03",
     label: "Pro",
-    desc: "Le bot bloque et stratégise.",
-    emoji: "💀",
-    badgeStyle: styles.cardBadgeHard,
+    desc: "The bot blocks and strategises.",
+    icon: "shield",
+    style: "secondary",
   },
 ];
 
-const DifficultyContent = ({
-  onSelect,
-}: {
-  onSelect: (d: Difficulty) => void;
-}) => (
+const DifficultyContent = ({ onSelect }: { onSelect: (d: Difficulty) => void }) => (
   <>
-    <Text style={styles.eyebrow}>Mode solo</Text>
-    <Text style={styles.title}>
-      {"Jouer\n"}
-      <Text style={styles.titleAccent}>vs Bot</Text>
-    </Text>
+    <Text style={styles.titleVs}>VS</Text>
+    <Text style={styles.titleBot}>BOT</Text>
+    <Text style={styles.eyebrow}>Solo mode</Text>
     <Text style={styles.tagline}>
-      Affronte l'intelligence artificielle et teste ta stratégie.
+      Challenge the AI and put your strategy to the test.
     </Text>
 
     <View style={styles.shapesRow}>
@@ -72,32 +67,28 @@ const DifficultyContent = ({
     </View>
 
     <View style={styles.cardList}>
-      {DIFFICULTY_DATA.map((d, i) => (
+      {DIFFICULTY_ITEMS.map((item) => (
         <TouchableOpacity
-          key={d.key}
+          key={item.key}
           style={[
             styles.card,
-            i === 0 ? styles.cardPrimary : styles.cardSecondary,
+            item.style === "primary" ? styles.cardPrimary : styles.cardSecondary,
           ]}
-          onPress={() => onSelect(d.key)}
-          activeOpacity={0.75}
+          onPress={() => onSelect(item.key)}
+          activeOpacity={0.85}
         >
           <View style={styles.cardLeft}>
-            <Text style={styles.cardCode}>{d.code}</Text>
-            <Text style={styles.cardLabel}>{d.label}</Text>
-            <Text style={styles.cardDesc}>{d.desc}</Text>
+            <Text style={styles.cardCode}>{item.code}</Text>
+            <Text style={styles.cardLabel}>{item.label}</Text>
           </View>
-          <View style={[styles.cardBadge, d.badgeStyle]}>
-            <Text style={styles.cardBadgeText}>{d.emoji}</Text>
-          </View>
+          <Feather name={item.icon} size={22} color={COLORS.onSurface} />
         </TouchableOpacity>
       ))}
     </View>
 
     <View style={styles.footerLine}>
       <View style={styles.footerDash} />
-      <Text style={styles.footerText}>Yam Master</Text>
-      <View style={styles.footerDash} />
+      <Text style={styles.footerText}>Selected by the Master's Council</Text>
     </View>
   </>
 );
@@ -110,15 +101,10 @@ export default function VsBotGameScreen() {
   const isDesktop = width >= 768;
 
   const [inGame, setInGame] = useState(false);
-  const [myPlayerKey, setMyPlayerKey] = useState<
-    "player:1" | "player:2" | null
-  >(null);
+  const [myPlayerKey, setMyPlayerKey] = useState<"player:1" | "player:2" | null>(null);
   const [opponentUsername, setOpponentUsername] = useState("");
-  const [playerUsername, setPlayerUsername] = useState("Vous");
-  const [gameResult, setGameResult] = useState<{
-    won: boolean;
-    reason: string;
-  } | null>(null);
+  const [playerUsername, setPlayerUsername] = useState("You");
+  const [gameResult, setGameResult] = useState<{ won: boolean; reason: string } | null>(null);
 
   useEffect(() => {
     if (!socket) return;
@@ -137,14 +123,12 @@ export default function VsBotGameScreen() {
     };
 
     const onGameEnd = (data: { winnerId: string; reason: string }) => {
-      const won = data.winnerId === socket.id;
-      setGameResult({ won, reason: data.reason });
+      setGameResult({ won: data.winnerId === socket.id, reason: data.reason });
       setInGame(false);
     };
 
     socket.on("game.start", onGameStart);
     socket.on("game.end", onGameEnd);
-
     return () => {
       socket.off("game.start", onGameStart);
       socket.off("game.end", onGameEnd);
@@ -153,8 +137,7 @@ export default function VsBotGameScreen() {
 
   const startGame = (difficulty: Difficulty) => {
     if (!socket) return;
-    const username = session?.user?.name ?? undefined;
-    socket.emit("bot.game.start", { difficulty, username });
+    socket.emit("bot.game.start", { difficulty, username: session?.user?.name ?? undefined });
   };
 
   const resetScreen = () => {
@@ -176,26 +159,24 @@ export default function VsBotGameScreen() {
   if (gameResult) {
     const resultContent = (
       <View style={styles.resultCard}>
-        <Text style={styles.resultEmoji}>{gameResult.won ? "🏆" : "😤"}</Text>
-        <Text style={styles.resultTitle}>
-          {gameResult.won ? "Victoire !" : "Défaite"}
-        </Text>
+        <View style={styles.resultIconRow}>
+          <Feather
+            name={gameResult.won ? "award" : "x-circle"}
+            size={40}
+            color={gameResult.won ? COLORS.secondary : COLORS.tertiary}
+          />
+        </View>
+        <Text style={styles.resultTitle}>{gameResult.won ? "Victory!" : "Defeat"}</Text>
         <Text style={styles.resultDesc}>
-          {gameResult.reason === "ALIGNMENT" &&
-            (gameResult.won
-              ? "Tu as aligné 5 pions."
-              : "Le bot a aligné 5 pions.")}
-          {gameResult.reason === "PIECES_OUT" && "Plus de pions disponibles."}
-          {gameResult.reason === "DISCONNECT" && "Partie terminée."}
+          {gameResult.reason === "ALIGNMENT" && (gameResult.won ? "You aligned 5 pieces." : "The bot aligned 5 pieces.")}
+          {gameResult.reason === "PIECES_OUT" && "No pieces left."}
+          {gameResult.reason === "DISCONNECT" && "Game over."}
         </Text>
         <TouchableOpacity style={styles.resultPrimaryButton} onPress={resetScreen}>
-          <Text style={styles.resultPrimaryButtonText}>Rejouer</Text>
+          <Text style={styles.resultPrimaryButtonText}>Play again</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.resultSecondaryButton}
-          onPress={() => navigation.navigate("HomeScreen")}
-        >
-          <Text style={styles.resultSecondaryButtonText}>Accueil</Text>
+        <TouchableOpacity style={styles.resultSecondaryButton} onPress={() => navigation.navigate("HomeScreen")}>
+          <Text style={styles.resultSecondaryButtonText}>Home</Text>
         </TouchableOpacity>
       </View>
     );
@@ -226,11 +207,7 @@ export default function VsBotGameScreen() {
       <View style={styles.screen}>
         <View style={styles.desktopWrapper}>
           <View style={styles.desktopCard}>
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={styles.desktopScroll}
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.desktopScroll} showsVerticalScrollIndicator={false}>
               <DifficultyContent onSelect={startGame} />
             </ScrollView>
             <BottomNav activeTab="play" />
@@ -242,11 +219,7 @@ export default function VsBotGameScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <DifficultyContent onSelect={startGame} />
       </ScrollView>
       <BottomNav activeTab="play" />

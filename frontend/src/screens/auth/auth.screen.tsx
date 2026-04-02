@@ -28,21 +28,23 @@ const FormContent = ({ mode, username, password, error, loading, onUsername, onP
   onSwitch: (m: Mode) => void;
 }) => (
   <>
-    {/* Logo row */}
     <View style={styles.logoRow}>
       <View style={styles.logoCircle}>
         <View style={styles.logoDot} />
       </View>
-      <Text style={styles.logoLabel}>The Path</Text>
+      <Text style={styles.logoLabel}>Yam <Text style={styles.logoLabelAccent}>Master</Text></Text>
     </View>
 
-    {/* Title */}
-    <View style={styles.titleSection}>
-      <Text style={styles.title}>Identify</Text>
-      <Text style={styles.subtitle}>Choose your entry point</Text>
+    <Text style={styles.titleLine1}>Enter</Text>
+    <Text style={styles.titleLine2}>Arena</Text>
+    <Text style={styles.subtitle}>Choose your entry point below.</Text>
+
+    <View style={styles.shapesRow}>
+      <View style={styles.shapeCircle} />
+      <View style={styles.shapeRect} />
+      <View style={styles.shapeWide} />
     </View>
 
-    {/* Mode switcher */}
     <View style={styles.modeSwitcher}>
       <TouchableOpacity
         style={[styles.modeButton, mode === 'login' && styles.modeButtonActive]}
@@ -64,7 +66,6 @@ const FormContent = ({ mode, username, password, error, loading, onUsername, onP
       </TouchableOpacity>
     </View>
 
-    {/* Inputs */}
     <View style={styles.inputsSection}>
       <View style={styles.inputCard}>
         <View style={styles.inputIconCircle}>
@@ -99,7 +100,6 @@ const FormContent = ({ mode, username, password, error, loading, onUsername, onP
 
     {error && <Text style={styles.error}>{error}</Text>}
 
-    {/* CTA */}
     <TouchableOpacity
       style={styles.button}
       onPress={onSubmit}

@@ -61,19 +61,22 @@ export default StyleSheet.create({
     textTransform: "uppercase",
     color: COLORS.primary,
     marginBottom: 8,
+    marginTop: 4,
   },
-  title: {
+  titleVs: {
     fontFamily: "Inter_700Bold",
-    fontSize: 52,
-    lineHeight: 50,
-    letterSpacing: -2,
+    fontSize: 72,
+    fontWeight: "800",
+    lineHeight: 66,
+    letterSpacing: -3,
     color: COLORS.onSurface,
   },
-  titleAccent: {
+  titleBot: {
     fontFamily: "Inter_700Bold",
-    fontSize: 52,
-    lineHeight: 50,
-    letterSpacing: -2,
+    fontSize: 72,
+    fontWeight: "800",
+    lineHeight: 66,
+    letterSpacing: -3,
     color: COLORS.tertiary,
   },
   tagline: {
@@ -81,8 +84,8 @@ export default StyleSheet.create({
     fontSize: 14,
     lineHeight: 22,
     color: COLORS.onSurfaceVariant,
-    marginTop: 14,
-    maxWidth: 240,
+    marginTop: 10,
+    maxWidth: 260,
   },
 
   shapesRow: {
@@ -135,7 +138,6 @@ export default StyleSheet.create({
   },
   cardLeft: {
     gap: 4,
-    flex: 1,
   },
   cardCode: {
     fontFamily: "Inter_700Bold",
@@ -147,35 +149,10 @@ export default StyleSheet.create({
   cardLabel: {
     fontFamily: "Inter_700Bold",
     fontSize: 18,
+    fontWeight: "800",
     letterSpacing: -0.5,
     color: COLORS.onSurface,
     textTransform: "uppercase",
-  },
-  cardDesc: {
-    fontFamily: "Inter_400Regular",
-    fontSize: 13,
-    color: COLORS.onSurfaceVariant,
-    marginTop: 2,
-  },
-  cardBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cardBadgeEasy: {
-    backgroundColor: COLORS.secondaryContainer,
-  },
-  cardBadgeMedium: {
-    backgroundColor: COLORS.tertiaryContainer,
-  },
-  cardBadgeHard: {
-    backgroundColor: COLORS.primaryContainer,
-  },
-  cardBadgeText: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 14,
   },
 
   footerLine: {
@@ -198,40 +175,6 @@ export default StyleSheet.create({
     color: COLORS.onSurfaceVariant,
   },
 
-  bottomNav: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: COLORS.surface,
-    paddingTop: 12,
-    paddingBottom: 28,
-    paddingHorizontal: 24,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: "#2F3334",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: COLORS.surfaceContainerLow,
-  },
-  backButtonText: {
-    fontFamily: "Inter_700Bold",
-    fontSize: 13,
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    color: COLORS.onSurface,
-  },
-
   resultContainer: {
     flex: 1,
     alignItems: "center",
@@ -250,9 +193,8 @@ export default StyleSheet.create({
     shadowRadius: 32,
     elevation: 4,
   },
-  resultEmoji: {
-    fontSize: 48,
-    textAlign: "center",
+  resultIconRow: {
+    alignItems: "center",
     marginBottom: 4,
   },
   resultTitle: {
