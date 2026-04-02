@@ -38,7 +38,7 @@ const MENU_ITEMS = [
     code: "ACTION_04",
     label: "How to Play",
     icon: "book-open" as const,
-    screen: null,
+    screen: "RulesScreen" as const,
     style: "secondary" as const,
   },
 ];
@@ -77,7 +77,11 @@ const MenuContent = ({
               : styles.menuItemSecondary,
           ]}
           activeOpacity={0.85}
-          onPress={() => item.screen && navigation.navigate(item.screen)}
+          onPress={() => {
+            if (item.screen === "OnlineGameScreen") navigation.navigate("OnlineGameScreen");
+            if (item.screen === "VsBotGameScreen") navigation.navigate("VsBotGameScreen");
+            if (item.screen === "RulesScreen") navigation.navigate("RulesScreen");
+          }}
         >
           <View style={styles.menuItemLeft}>
             <Text style={styles.menuItemCode}>{item.code}</Text>

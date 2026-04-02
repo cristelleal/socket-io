@@ -5,6 +5,7 @@ export type RootStackParamList = {
   HomeScreen: undefined;
   OnlineGameScreen: undefined;
   VsBotGameScreen: undefined;
+  RulesScreen: undefined;
 };
 
 declare global {

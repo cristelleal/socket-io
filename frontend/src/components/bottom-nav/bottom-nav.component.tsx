@@ -10,9 +10,10 @@ export type ActiveTab = 'play' | 'rank' | 'rules';
 
 interface BottomNavProps {
   activeTab: ActiveTab;
+  absolute?: boolean;
 }
 
-export default function BottomNav({ activeTab }: BottomNavProps) {
+export default function BottomNav({ activeTab, absolute = false }: BottomNavProps) {
   const navigation = useNavigation<AppNavigationProp>();
   const { signOut } = useAuth();
   const insets = useSafeAreaInsets();
@@ -25,12 +26,12 @@ export default function BottomNav({ activeTab }: BottomNavProps) {
   }[] = [
     { id: 'play',    icon: 'grid',        label: 'Play',     onPress: () => navigation.navigate('HomeScreen') },
     { id: 'rank',    icon: 'bar-chart-2', label: 'Rank',     onPress: () => {} },
-    { id: 'rules',   icon: 'book-open',   label: 'Rules',    onPress: () => {} },
+    { id: 'rules',   icon: 'book-open',   label: 'Rules',    onPress: () => navigation.navigate('RulesScreen') },
     { id: 'signout', icon: 'log-out',     label: 'Sign out', onPress: signOut },
   ];
 
   return (
-    <View style={[styles.wrapper, { paddingBottom: insets.bottom + 12 }]}>
+    <View style={[styles.wrapper, absolute && styles.wrapperAbsolute, { paddingBottom: insets.bottom + 12 }]}>
       <View style={styles.bottomNav}>
         {tabs.map(tab => {
           const isActive = tab.id === activeTab;
