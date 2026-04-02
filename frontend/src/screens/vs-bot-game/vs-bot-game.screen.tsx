@@ -156,6 +156,8 @@ export default function VsBotGameScreen() {
         playerUsername={playerUsername}
         opponentUsername={opponentUsername}
         myPlayerKey={myPlayerKey}
+        gameModeLabel="VS Bot"
+        onExitToMenu={() => navigation.navigate("HomeScreen")}
       />
     );
   }

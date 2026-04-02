@@ -1,13 +1,16 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { Text, View, TouchableOpacity, useWindowDimensions, ScrollView } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { SocketContext } from "../../shared/contexts/socket.context";
 import { useAuth } from "../../shared/contexts/auth.context";
+import { AppNavigationProp } from "../../shared/types/navigation.types";
 import Board from "../../components/board/board.component";
 import BottomNav from "../../components/bottom-nav/bottom-nav.component";
 import styles, { COLORS } from "./online-game.controller.styles";
 
 const OnlineGameController = () => {
+  const navigation = useNavigation<AppNavigationProp>();
   const socket = useContext(SocketContext);
   const { session } = useAuth();
   const { width } = useWindowDimensions();
@@ -90,6 +93,8 @@ const OnlineGameController = () => {
         playerUsername={playerUsername}
         opponentUsername={opponentUsername}
         myPlayerKey={myPlayerKey}
+        gameModeLabel="Online Match"
+        onExitToMenu={() => navigation.navigate("HomeScreen")}
       />
     );
   }

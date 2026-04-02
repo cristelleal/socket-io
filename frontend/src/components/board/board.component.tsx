@@ -1,4 +1,5 @@
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import Timer from '../timer/timer.component';
 import Score from '../score/score.component';
 import OpponentDeck from '../decks/opponent-deck/opponent-deck.component';
@@ -11,6 +12,8 @@ interface BoardProps {
   playerUsername: string;
   opponentUsername: string;
   myPlayerKey: 'player:1' | 'player:2' | null;
+  gameModeLabel?: string;
+  onExitToMenu?: () => void;
 }
 
 const ScoreCard = ({ label, name, scoreKey, timerKey, isOpponent }: {
@@ -39,8 +42,30 @@ const ScoreCard = ({ label, name, scoreKey, timerKey, isOpponent }: {
   </View>
 );
 
-const Board = ({ playerUsername, opponentUsername, myPlayerKey }: BoardProps) => (
+const Board = ({
+  playerUsername,
+  opponentUsername,
+  myPlayerKey,
+  gameModeLabel = 'Game Board',
+  onExitToMenu,
+}: BoardProps) => (
   <View style={styles.container}>
+
+    <View style={styles.topBar}>
+      <View style={styles.topBarLeft}>
+        <View style={styles.modePill}>
+          <Feather name="grid" size={13} color={COLORS.primary} />
+          <Text style={styles.modePillText}>{gameModeLabel}</Text>
+        </View>
+        <Text style={styles.modeHint}>Align 5 pieces to win</Text>
+      </View>
+      {onExitToMenu && (
+        <TouchableOpacity style={styles.backButton} onPress={onExitToMenu} activeOpacity={0.85}>
+          <Feather name="arrow-left" size={14} color={COLORS.onSurface} />
+          <Text style={styles.backButtonText}>Back to menu</Text>
+        </TouchableOpacity>
+      )}
+    </View>
 
     <View style={styles.scoreboardRow}>
       <ScoreCard label="Player 01" name={playerUsername} scoreKey="myScore" timerKey="playerTimer" />
