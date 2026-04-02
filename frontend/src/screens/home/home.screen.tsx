@@ -9,6 +9,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { AppNavigationProp } from "../../shared/types/navigation.types";
 import { useAuth } from "../../shared/contexts/auth.context";
+import BottomNav from "../../components/bottom-nav/bottom-nav.component";
 import styles, { COLORS } from "./home.styles";
 
 const MENU_ITEMS = [
@@ -45,11 +46,9 @@ const MENU_ITEMS = [
 const MenuContent = ({
   navigation,
   username,
-  signOut,
 }: {
   navigation: AppNavigationProp;
   username: string;
-  signOut: () => void;
 }) => (
   <>
     <Text style={styles.titleYam}>YAM</Text>
@@ -88,38 +87,13 @@ const MenuContent = ({
         </TouchableOpacity>
       ))}
     </View>
-
-    <View style={styles.footerLine}>
-      <View style={styles.footerDash} />
-      <Text style={styles.footerText}>Selected by the Master's Council</Text>
-    </View>
   </>
 );
 
-const BottomNav = ({ signOut }: { signOut: () => void }) => (
-  <View style={styles.bottomNav}>
-    <TouchableOpacity style={[styles.navItem, styles.navItemActive]}>
-      <Feather name="grid" size={20} color={COLORS.secondary} />
-      <Text style={[styles.navLabel, styles.navLabelActive]}>Play</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem}>
-      <Feather name="bar-chart-2" size={20} color={COLORS.onSurface} />
-      <Text style={styles.navLabel}>Rank</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem}>
-      <Feather name="book-open" size={20} color={COLORS.onSurface} />
-      <Text style={styles.navLabel}>Rules</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem} onPress={signOut}>
-      <Feather name="log-out" size={20} color={COLORS.onSurface} />
-      <Text style={styles.navLabel}>Sign out</Text>
-    </TouchableOpacity>
-  </View>
-);
 
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigationProp>();
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
 
@@ -131,16 +105,16 @@ export default function HomeScreen() {
         <View style={styles.desktopWrapper}>
           <View style={styles.desktopCard}>
             <ScrollView
+              style={{ flex: 1 }}
               contentContainerStyle={styles.desktopScroll}
               showsVerticalScrollIndicator={false}
             >
               <MenuContent
                 navigation={navigation}
                 username={username}
-                signOut={signOut}
               />
             </ScrollView>
-            <BottomNav signOut={signOut} />
+            <BottomNav activeTab="play" />
           </View>
         </View>
       </View>
@@ -150,16 +124,16 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <ScrollView
+        style={{ flex: 1 }}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <MenuContent
           navigation={navigation}
           username={username}
-          signOut={signOut}
         />
       </ScrollView>
-      <BottomNav signOut={signOut} />
+      <BottomNav activeTab="play" />
     </View>
   );
 }

@@ -1,13 +1,17 @@
 import { useEffect, useState, useContext } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, useWindowDimensions, ScrollView } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { SocketContext } from "../../shared/contexts/socket.context";
 import { useAuth } from "../../shared/contexts/auth.context";
 import Board from "../../components/board/board.component";
-import styles from "./online-game.controller.styles";
+import BottomNav from "../../components/bottom-nav/bottom-nav.component";
+import styles, { COLORS } from "./online-game.controller.styles";
 
 const OnlineGameController = () => {
   const socket = useContext(SocketContext);
   const { session } = useAuth();
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 768;
 
   const [inQueue, setInQueue] = useState(false);
   const [inGame, setInGame] = useState(false);
@@ -80,57 +84,91 @@ const OnlineGameController = () => {
     }
   };
 
-  if (gameResult) {
+  if (inGame) {
     return (
-      <View style={styles.container}>
-        <View style={styles.stateCard}>
-          <Text style={styles.paragraph}>
-            {gameResult.won ? "Victoire !" : "Défaite"}
-          </Text>
-          <Text style={styles.footnote}>
-            {gameResult.reason === "ALIGNMENT" &&
-              (gameResult.won
-                ? "Alignement de 5 !"
-                : "L'adversaire a aligné 5 pions.")}
-            {gameResult.reason === "PIECES_OUT" && "Plus de pions disponibles."}
-            {gameResult.reason === "DISCONNECT" &&
-              "L'adversaire s'est déconnecté."}
-          </Text>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handlePlayAgain}
-          >
-            <Text style={styles.actionButtonText}>Rejouer</Text>
-          </TouchableOpacity>
+      <Board
+        playerUsername={playerUsername}
+        opponentUsername={opponentUsername}
+        myPlayerKey={myPlayerKey}
+      />
+    );
+  }
+
+  const cardContent = gameResult ? (
+    <View style={styles.resultCard}>
+      <View style={styles.resultIconRow}>
+        <Feather
+          name={gameResult.won ? "award" : "x-circle"}
+          size={40}
+          color={gameResult.won ? COLORS.secondary : COLORS.tertiary}
+        />
+      </View>
+      <Text style={styles.resultTitle}>
+        {gameResult.won ? "Victory!" : "Defeat"}
+      </Text>
+      <Text style={styles.resultDesc}>
+        {gameResult.reason === "ALIGNMENT" &&
+          (gameResult.won ? "You aligned 5 pieces." : "Opponent aligned 5 pieces.")}
+        {gameResult.reason === "PIECES_OUT" && "No pieces left."}
+        {gameResult.reason === "DISCONNECT" && "Opponent disconnected."}
+      </Text>
+      <TouchableOpacity style={styles.primaryButton} onPress={handlePlayAgain}>
+        <Text style={styles.primaryButtonText}>Play again</Text>
+      </TouchableOpacity>
+    </View>
+  ) : (
+    <View style={styles.stateCard}>
+      {!inQueue && (
+        <>
+          <Feather name="wifi" size={28} color={COLORS.onSurfaceSubtle} />
+          <Text style={styles.paragraph}>Connecting...</Text>
+        </>
+      )}
+      {inQueue && (
+        <>
+          <Feather name="users" size={28} color={COLORS.onSurfaceSubtle} />
+          <Text style={styles.paragraph}>Waiting for an opponent...</Text>
+          <Text style={styles.footnote}>You will be matched automatically.</Text>
+        </>
+      )}
+    </View>
+  );
+
+  if (isDesktop) {
+    return (
+      <View style={styles.screen}>
+        <View style={styles.desktopWrapper}>
+          <View style={styles.desktopCard}>
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={styles.desktopScroll}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text style={styles.eyebrow}>Online</Text>
+              <Text style={styles.title}>
+                {"Play\n"}
+                <Text style={styles.titleAccent}>Online</Text>
+              </Text>
+              <View style={styles.shapesRow}>
+                <View style={styles.shapeCircle} />
+                <View style={styles.shapeRect} />
+                <View style={styles.shapeWide} />
+              </View>
+              {cardContent}
+            </ScrollView>
+            <BottomNav activeTab="play" />
+          </View>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {!inQueue && !inGame && (
-        <View style={styles.stateCard}>
-          <Text style={styles.paragraph}>Connexion au serveur...</Text>
-        </View>
-      )}
-
-      {inQueue && (
-        <View style={styles.stateCard}>
-          <Text style={styles.paragraph}>En attente d'un adversaire...</Text>
-          <Text style={styles.footnote}>
-            Vous serez connecté automatiquement.
-          </Text>
-        </View>
-      )}
-
-      {inGame && (
-        <Board
-          playerUsername={playerUsername}
-          opponentUsername={opponentUsername}
-          myPlayerKey={myPlayerKey}
-        />
-      )}
+    <View style={styles.screen}>
+      <View style={styles.centeredContent}>
+        {cardContent}
+      </View>
+      <BottomNav activeTab="play" />
     </View>
   );
 };

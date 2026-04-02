@@ -22,10 +22,36 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
   },
 
+  desktopWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+  },
+  desktopCard: {
+    width: '100%',
+    maxWidth: 560,
+    maxHeight: '90%' as any,
+    backgroundColor: COLORS.surface,
+    borderRadius: 24,
+    overflow: 'hidden',
+    shadowColor: '#2F3334',
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.08,
+    shadowRadius: 48,
+    elevation: 8,
+  },
+  desktopScroll: {
+    paddingTop: 40,
+    paddingHorizontal: 40,
+    paddingBottom: 120,
+  },
+
   scrollContent: {
+    flexGrow: 1,
     paddingTop: 56,
     paddingHorizontal: 24,
-    paddingBottom: 140,
+    paddingBottom: 32,
   },
 
   eyebrow: {
@@ -208,7 +234,6 @@ export default StyleSheet.create({
 
   resultContainer: {
     flex: 1,
-    backgroundColor: COLORS.background,
     alignItems: "center",
     justifyContent: "center",
     padding: 24,

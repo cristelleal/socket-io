@@ -5,17 +5,17 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9F9F9',
   },
+
   desktopWrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 40,
-    paddingVertical: 48,
   },
   desktopCard: {
     width: '100%',
     maxWidth: 560,
-    maxHeight: '90%',
+    maxHeight: '90%' as any,
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     overflow: 'hidden',
@@ -25,17 +25,19 @@ export default StyleSheet.create({
     shadowRadius: 48,
     elevation: 8,
   },
+
   stateCard: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
+    gap: 12,
   },
   paragraph: {
     fontFamily: 'Inter_700Bold',
     color: '#2F3334',
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 18,
+    letterSpacing: -0.5,
   },
   footnote: {
     fontFamily: 'Inter_400Regular',

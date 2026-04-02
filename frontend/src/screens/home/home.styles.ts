@@ -26,7 +26,6 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
   },
 
-  // Desktop layout
   desktopWrapper: {
     flex: 1,
     alignItems: 'center',
@@ -53,13 +52,11 @@ export default StyleSheet.create({
   },
 
   scrollContent: {
-    flexGrow: 1,
-    paddingTop: 56,
+    paddingTop: 40,
     paddingHorizontal: 24,
-    paddingBottom: 140,
+    paddingBottom: 24,
   },
 
-  // Branding
   eyebrow: {
     fontFamily: 'Inter_700Bold',
     fontSize: 11,
@@ -91,17 +88,16 @@ export default StyleSheet.create({
     fontWeight: '400',
     lineHeight: 22,
     color: COLORS.onSurfaceVariant,
-    marginTop: 16,
+    marginTop: 10,
     maxWidth: 260,
   },
 
-  // Bauhaus shapes
   shapesRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: 12,
-    marginTop: 28,
-    marginBottom: 40,
+    marginTop: 16,
+    marginBottom: 24,
   },
   shapeCircle: {
     width: 48,
@@ -122,7 +118,6 @@ export default StyleSheet.create({
     backgroundColor: COLORS.tertiaryContainer,
   },
 
-  // Menu items
   menuList: {
     gap: 10,
   },
@@ -165,7 +160,6 @@ export default StyleSheet.create({
     textTransform: 'uppercase',
   },
 
-  // Footer line
   footerLine: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,45 +181,4 @@ export default StyleSheet.create({
     color: COLORS.onSurfaceVariant,
   },
 
-  // Bottom nav
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    paddingTop: 12,
-    paddingBottom: 28,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#2F3334',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  navItem: {
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  navItemActive: {
-    backgroundColor: COLORS.secondaryContainer,
-  },
-  navLabel: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    color: COLORS.onSurface,
-  },
-  navLabelActive: {
-    color: COLORS.secondary,
-  },
 });
