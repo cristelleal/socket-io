@@ -155,12 +155,29 @@ export default function RulesScreen() {
   const isWeb = Platform.OS === 'web';
   const { height } = useWindowDimensions();
 
+  if (!isWeb) {
+    return (
+      <View style={styles.screen}>
+        <View style={styles.contentArea}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContentMobile}
+            showsVerticalScrollIndicator={false}
+          >
+            <RulesContent />
+          </ScrollView>
+        </View>
+        <BottomNav activeTab="rules" />
+      </View>
+    );
+  }
+
   return (
-    <View style={[styles.screen, isWeb && { height, maxHeight: height, overflow: 'hidden' }]}>
+    <View style={[styles.screen, { height, maxHeight: height, overflow: 'hidden' }]}>
       <View style={styles.contentArea}>
         <ScrollView
-          style={[styles.scrollView, isWeb && { maxHeight: height }]}
-          contentContainerStyle={styles.scrollContent}
+          style={[styles.scrollView, { maxHeight: height }]}
+          contentContainerStyle={styles.scrollContentWeb}
           showsVerticalScrollIndicator={false}
         >
           <RulesContent />

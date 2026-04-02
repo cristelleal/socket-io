@@ -57,7 +57,12 @@ export default StyleSheet.create({
     paddingHorizontal: 40,
     paddingBottom: 32,
   },
-  scrollContent: {
+  scrollContentMobile: {
+    paddingTop: 48,
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+  },
+  scrollContentWeb: {
     paddingTop: 48,
     paddingHorizontal: 24,
     paddingBottom: 168,
