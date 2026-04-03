@@ -17,8 +17,13 @@ if (Platform.OS !== 'web') {
 
 const getBaseURL = (): string => {
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
-    // On web, use EXPO_PUBLIC_API_URL (local dev) or current origin (Vercel, proxied via vercel.json)
-    return process.env.EXPO_PUBLIC_API_URL ?? window.location.origin;
+    const origin = window.location.origin;
+    // In local dev, route directly to backend
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return process.env.EXPO_PUBLIC_SOCKET_URL ?? 'http://localhost:3000';
+    }
+    // In production (Vercel), use same origin — vercel.json rewrites /api/* to backend
+    return origin;
   }
   return process.env.EXPO_PUBLIC_SOCKET_URL ?? 'http://localhost:3000';
 };
