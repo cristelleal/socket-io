@@ -25,8 +25,17 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins,
   session: {
+    expiresIn: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 24 * 60 * 60, // Update session cookie age daily
     cookieCache: {
       enabled: true,
+    },
+    cookie: {
+      attributes: {
+        httpOnly: true,
+        sameSite: 'none', // Critical for cross-domain cookies
+        secure: true, // Required when sameSite=none
+      },
     },
   },
   advanced: {
