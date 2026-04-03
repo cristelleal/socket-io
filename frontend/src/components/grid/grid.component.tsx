@@ -87,7 +87,7 @@ const Grid = ({ myPlayerKey }: GridProps) => {
                     ]}
                   >
                     {cell.viewContent ? (
-                      <Text style={styles.cellText}>{cell.viewContent}</Text>
+                      <Text style={styles.cellText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{cell.viewContent}</Text>
                     ) : null}
                   </View>
                 </TouchableOpacity>

@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, Platform, useWindowDimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BottomNav from '../../components/bottom-nav/bottom-nav.component';
 import styles, { COLORS } from './rules.screen.styles';
 
@@ -154,6 +155,7 @@ const RulesContent = () => (
 export default function RulesScreen() {
   const isWeb = Platform.OS === 'web';
   const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   if (!isWeb) {
     return (
@@ -161,7 +163,7 @@ export default function RulesScreen() {
         <View style={styles.contentArea}>
           <ScrollView
             style={styles.scrollView}
-            contentContainerStyle={styles.scrollContentMobile}
+            contentContainerStyle={[styles.scrollContentMobile, { paddingTop: insets.top + 16 }]}
             showsVerticalScrollIndicator={false}
           >
             <RulesContent />

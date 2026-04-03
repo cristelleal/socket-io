@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BottomNav from '../../components/bottom-nav/bottom-nav.component';
 import { SocketContext } from '../../shared/contexts/socket.context';
 import styles, { COLORS } from './rank.screen.styles';
@@ -23,6 +24,7 @@ export default function RankScreen() {
   const socket = useContext(SocketContext);
   const isWeb = Platform.OS === 'web';
   const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -144,7 +146,7 @@ export default function RankScreen() {
     return (
       <View style={styles.screen}>
         <View style={styles.contentArea}>
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContentMobile} showsVerticalScrollIndicator={false}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContentMobile, { paddingTop: insets.top + 16 }]} showsVerticalScrollIndicator={false}>
             {content}
           </ScrollView>
         </View>

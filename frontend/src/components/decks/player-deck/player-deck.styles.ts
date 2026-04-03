@@ -10,7 +10,7 @@ export default StyleSheet.create({
   diceContainer: {
     flex: 1,
     flexDirection: 'row',
-    gap: 6,
+    gap: 4,
     alignItems: 'center',
   },
   rollInfoText: {

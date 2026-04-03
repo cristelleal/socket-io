@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppNavigationProp } from "../../shared/types/navigation.types";
 import { useAuth } from "../../shared/contexts/auth.context";
 import BottomNav from "../../components/bottom-nav/bottom-nav.component";
@@ -101,6 +102,7 @@ export default function HomeScreen() {
   const { session } = useAuth();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
+  const insets = useSafeAreaInsets();
 
   const username = session?.user?.name ?? "Master";
 
@@ -130,7 +132,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 16 }]}
         showsVerticalScrollIndicator={false}
       >
         <MenuContent

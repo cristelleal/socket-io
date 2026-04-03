@@ -11,6 +11,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { authClient } from '../../shared/lib/auth.client';
 import styles, { COLORS } from './auth.screen.styles';
 
@@ -121,6 +122,7 @@ const FormContent = ({ mode, username, password, error, loading, onUsername, onP
 export const AuthScreen = () => {
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
+  const insets = useSafeAreaInsets();
 
   const [mode, setMode] = useState<Mode>('login');
   const [username, setUsername] = useState('');
@@ -192,7 +194,7 @@ export const AuthScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
-        contentContainerStyle={styles.inner}
+        contentContainerStyle={[styles.inner, { paddingTop: insets.top + 16 }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

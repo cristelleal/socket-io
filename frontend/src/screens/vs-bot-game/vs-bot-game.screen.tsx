@@ -7,6 +7,7 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { SocketContext } from "../../shared/contexts/socket.context";
 import { useAuth } from "../../shared/contexts/auth.context";
@@ -99,6 +100,7 @@ export default function VsBotGameScreen() {
   const { session } = useAuth();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
+  const insets = useSafeAreaInsets();
 
   const [inGame, setInGame] = useState(false);
   const [myPlayerKey, setMyPlayerKey] = useState<"player:1" | "player:2" | null>(null);
@@ -225,7 +227,7 @@ export default function VsBotGameScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 16 }]} showsVerticalScrollIndicator={false}>
         <DifficultyContent onSelect={startGame} />
       </ScrollView>
       <BottomNav activeTab="play" />

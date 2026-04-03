@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Timer from '../timer/timer.component';
 import Score from '../score/score.component';
 import OpponentDeck from '../decks/opponent-deck/opponent-deck.component';
@@ -48,8 +49,12 @@ const Board = ({
   myPlayerKey,
   gameModeLabel = 'Game Board',
   onExitToMenu,
-}: BoardProps) => (
-  <View style={styles.container}>
+}: BoardProps) => {
+  const insets = useSafeAreaInsets();
+  const topPadding = Platform.OS !== 'web' ? insets.top + 12 : 12;
+
+  return (
+  <View style={[styles.container, { paddingTop: topPadding }]}>
 
     <View style={styles.topBar}>
       <View style={styles.topBarLeft}>
@@ -91,6 +96,7 @@ const Board = ({
     </View>
 
   </View>
-);
+  );
+};
 
 export default Board;

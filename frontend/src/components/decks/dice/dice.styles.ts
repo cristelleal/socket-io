@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   dice: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
     backgroundColor: '#F2F4F4',
     borderRadius: 10,
     justifyContent: 'center',
