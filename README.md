@@ -70,7 +70,7 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 |---|---|
 | Menu principal | Point d'entree vers parties online, bot, classement, regles |
 | Game Loop online | Matchmaking, attribution player:1/player:2, tours, timer, scoring, fin de partie |
-| Mode Vs Bot | Variante solo de la boucle de jeu |
+| Mode Vs Bot | Variante solo de la boucle de jeu (3 niveaux de difficultés)|
 | Classement | Endpoint backend de leaderboard, aggregation des resultats |
 | Authentification | Session utilisateur, profils, securisation du flux auth |
 | Regles | Ecran dedie expliquant combinaisons et mecaniques |
