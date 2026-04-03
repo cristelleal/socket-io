@@ -27,6 +27,12 @@
         "projectId": "059f274a-5f4c-4880-97f0-d39f5b661314"
       }
     },
-    "owner": "cris-organization"
+    "owner": "cris-organization",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/059f274a-5f4c-4880-97f0-d39f5b661314"
+    }
   }
 }
