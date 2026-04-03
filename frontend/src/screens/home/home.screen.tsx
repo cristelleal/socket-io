@@ -53,7 +53,7 @@ const MenuContent = ({
   <>
     <Text style={styles.titleYam}>YAM</Text>
     <Text style={styles.titleMaster}>MASTER</Text>
-    <br />
+    <View style={{ height: 8 }} />
     <Text style={styles.eyebrow}>Player {username}</Text>
     <Text style={styles.tagline}>
       A tactile journey into high-stakes strategy. Every move is a curated
