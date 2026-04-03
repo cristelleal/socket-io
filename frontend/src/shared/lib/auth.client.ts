@@ -17,11 +17,9 @@ if (Platform.OS !== 'web') {
 
 export const authClient = createAuthClient({
   baseURL: process.env.EXPO_PUBLIC_SOCKET_URL ?? 'http://localhost:3000',
-  ...(Platform.OS === 'web' && {
-    fetchOptions: {
-      credentials: 'include', // send cookies cross-domain on web
-    },
-  }),
+  fetchOptions: {
+    credentials: 'include', // Always include cookies (on web: sends cross-domain, on native: ignored)
+  },
   plugins,
 });
 
