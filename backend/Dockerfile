@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN DATABASE_URL=postgresql://x:x@x:5432/x npx prisma generate --schema=./prisma/schema.prisma
+RUN DATABASE_URL=postgresql://x:x@x:5432/x npx prisma generate
 RUN npm run build
 
 FROM node:20-alpine
@@ -21,4 +21,4 @@ COPY prisma ./prisma
 EXPOSE 3000
 
 # Lance les migrations puis démarre le serveur
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]

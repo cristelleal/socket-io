@@ -8,7 +8,9 @@ import { initSocket } from './bootstrap/socket';
 import { auth } from './modules/auth/auth';
 import { RankRepository } from './modules/rank/rank.repository';
 
-const ALLOWED_ORIGINS = ['http://localhost:8081', 'http://localhost:19006'];
+const ALLOWED_ORIGINS = process.env.TRUSTED_ORIGINS
+  ? process.env.TRUSTED_ORIGINS.split(',')
+  : ['http://localhost:8081', 'http://localhost:19006'];
 
 const app = express();
 
