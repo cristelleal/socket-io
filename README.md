@@ -85,7 +85,7 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 
 - Node.js 20+
 - npm 10+
-- Docker + Docker Compose plugin
+- Docker + Docker Compose 
 
 ### 1. Cloner et preparer les variables
 
@@ -167,7 +167,7 @@ Le frontend lit l'endpoint backend via EXPO_PUBLIC_SOCKET_URL. Le code applicati
 
 | Environnement | Build ou run | URL backend injectee | Resultat |
 |---|---|---|---|
-| Local dev | npx expo start | http://localhost:3000 ou IP LAN | L'app consomme le backend local |
+| Local dev | npx expo start | http://localhost:3000 | L'app consomme le backend local |
 | Preview EAS | eas build --profile preview | https://yatzy.puglabz.com | Build interne connectee a la prod |
 | Production EAS | eas build --profile production | https://yatzy.puglabz.com | Build store-ready connectee a la prod |
 
