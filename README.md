@@ -199,10 +199,14 @@ Notes deploiement Vercel:
 
 | Composant | Choix |
 |---|---|
-| Hebergement backend | Home Server prive (✓ Deployé) |
-| Hebergement frontend Web | Vercel (✓ Deployé) |
+| Hébergement backend | Home Server privé (✓ Déployé) |
+| Hébergement frontend Web | Vercel (✓ Déployé) |
 | Mobile frontend | En attente (limitations iOS/Android d'ordre financière) |
 | Reverse proxy | Traefik |
 | TLS | Cloudflare |
 | Persistance BDD | Volume Docker PostgreSQL |
 | Domaine backend | yatzy.puglabz.com |
+| Logs | Dozzle + logs Traefik |
+
+Le projet étant hébergé sur un serveur privé, un accès à Dozzle est disponible pour consulter les logs des conteneurs Docker en temps réel. Cela permet de monitorer le comportement du backend, détecter des erreurs et renforcer la sécurité en auditant l'activité des services. Les logs Traefik complètent ce dispositif en traçant l'ensemble du trafic HTTP entrant au niveau du reverse proxy.
+
