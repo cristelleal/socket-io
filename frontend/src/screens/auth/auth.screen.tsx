@@ -146,13 +146,26 @@ export const AuthScreen = () => {
         name: username.trim(),
         username: username.trim(),
       });
-      if (err) setError(err.message ?? 'Registration failed.');
+      if (err) {
+        setError(err.message ?? 'Registration failed.');
+        setLoading(false);
+        return;
+      }
     } else {
       const { error: err } = await authClient.signIn.username({
         username: username.trim(),
         password,
       });
-      if (err) setError(err.message ?? 'Login failed.');
+      if (err) {
+        setError(err.message ?? 'Login failed.');
+        setLoading(false);
+        return;
+      }
+    }
+
+    if (Platform.OS === 'web') {
+      window.location.reload();
+      return;
     }
 
     setLoading(false);
