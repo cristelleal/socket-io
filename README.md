@@ -11,7 +11,7 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 - [Points forts](#points-forts)
 - [Installation locale](#installation-locale)
 - [Tests backend](#tests-backend)
-- [Local vs production sur Expo](#local-vs-production-sur-expo)
+- [Environnements d'execution](#environnements-dexecution)
 - [Production et infrastructure](#production-et-infrastructure)
 - [Best practices](#best-practices)
 - [Roadmap technique courte](#roadmap-technique-courte)
@@ -27,6 +27,9 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 | Auth | Better Auth (adapter Prisma) |
 | Dev infra locale | Docker Compose + Adminer |
 | Infra prod | Home Server + Traefik + Docker Compose |
+| **Etat backend** | ✅ Deploye et operationel |
+| **Etat frontend** | ⚠ Vercel (Web incomplet car soucis avec le provider d'auth), Mobile en attente (frais pour plateformes mobiles) |
+| Domaine backend | https://yatzy.puglabz.com |
 
 ## Architecture
 
@@ -161,27 +164,18 @@ Couverture actuelle (tests unitaires):
 - Rank repository
 - Rank handler
 
-## Local vs production sur Expo
+## Environnements d'execution
 
-Le frontend lit l'endpoint backend via EXPO_PUBLIC_SOCKET_URL. Le code applicatif reste identique; seule la variable d'environnement change selon l'environnement cible.
+### Frontend local et dev
 
-| Environnement | Build ou run | URL backend injectee | Resultat |
-|---|---|---|---|
-| Local dev | npx expo start | http://localhost:3000 | L'app consomme le backend local |
-| Preview EAS | eas build --profile preview | https://yatzy.puglabz.com | Build interne connectee a la prod |
-| Production EAS | eas build --profile production | https://yatzy.puglabz.com | Build store-ready connectee a la prod |
-
-Commandes de reference:
+Le frontend lit l'endpoint backend via EXPO_PUBLIC_SOCKET_URL:
 
 ~~~bash
-# Local
+# Local dev (Expo native)
 EXPO_PUBLIC_SOCKET_URL=http://localhost:3000 npx expo start
 
-# Preview
-EXPO_PUBLIC_SOCKET_URL=https://yatzy.puglabz.com eas build --profile preview --platform ios
-
-# Production
-EXPO_PUBLIC_SOCKET_URL=https://yatzy.puglabz.com eas build --profile production --platform ios
+# Local dev (Expo Web)
+EXPO_PUBLIC_SOCKET_URL=http://localhost:3000 npx expo start --web
 ~~~
 
 Notes reseau mobile:
@@ -189,24 +183,35 @@ Notes reseau mobile:
 - Simulateur iOS: localhost fonctionne.
 - Appareil physique: utiliser l'IP LAN de la machine backend.
 
-Limitation actuelle de deploiement frontend:
+### Frontend en production
 
-- Le host/deploiement frontend n'a pas pu etre finalise completement cote iOS, faute de compte Apple Developer.
-- Sans compte Apple Developer, il n'est pas possible de produire une preview iOS coherente via EAS Build (signature/provisioning).
+| Environnement | plateforme | URL backend | Etat |
+|---|---|---|---|
+| Vercel | Web (React Native Web) | https://yatzy.puglabz.com | ⚠ Deploye incomplet |
+| Mobile | iOS/Android (Expo EAS) | https://yatzy.puglabz.com | ❌ Non disponible |
+
+Raison du deploiement Vercel incomplet:
+
+- Soucis avec le provider d'auth / Vercel (crossplatform), manque de temps
 
 ## Production et infrastructure
 
 | Composant | Choix |
 |---|---|
-| Hebergement backend | Home Server prive |
+| Hebergement backend | Home Server prive (✓ Deploye) |
+| Hebergement frontend Web | Vercel (⚠ Incomplet) |
+| Mobile frontend | En attente (limitations iOS/Android non resolues) |
 | Reverse proxy | Traefik |
 | TLS | Certificats geres via Traefik |
 | Persistance BDD | Volume Docker PostgreSQL |
-| Domaine | yatzy.puglabz.com |
+| Domaine backend | yatzy.puglabz.com |
 
-Commande de deploiement:
+### Etat du deploiement
+
+**Backend (Home Server)**: Entierement deploye et operationel.
 
 ~~~bash
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ~~~
+
 
