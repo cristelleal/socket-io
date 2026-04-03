@@ -15,10 +15,18 @@ if (Platform.OS !== 'web') {
   }
 }
 
+const getBaseURL = (): string => {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    // On web, use EXPO_PUBLIC_API_URL (local dev) or current origin (Vercel, proxied via vercel.json)
+    return process.env.EXPO_PUBLIC_API_URL ?? window.location.origin;
+  }
+  return process.env.EXPO_PUBLIC_SOCKET_URL ?? 'http://localhost:3000';
+};
+
 export const authClient = createAuthClient({
-  baseURL: process.env.EXPO_PUBLIC_SOCKET_URL ?? 'http://localhost:3000',
+  baseURL: getBaseURL(),
   fetchOptions: {
-    credentials: 'include', // Always include cookies (on web: sends cross-domain, on native: ignored)
+    credentials: 'include',
   },
   plugins,
 });
