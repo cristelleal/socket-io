@@ -1,6 +1,9 @@
 {
-  "plugins": [
-    "expo-secure-store",
-    "expo-font"
-  ]
+  "expo": {
+    "scheme": "socket-io",
+    "plugins": [
+      "expo-secure-store",
+      "expo-font"
+    ]
+  }
 }
