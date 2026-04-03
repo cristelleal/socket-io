@@ -15,8 +15,6 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 - [Tests backend](#tests-backend)
 - [Environnements d'execution](#environnements-dexecution)
 - [Production et infrastructure](#production-et-infrastructure)
-- [Best practices](#best-practices)
-- [Roadmap technique courte](#roadmap-technique-courte)
 
 ## Vue d'ensemble
 
@@ -208,5 +206,3 @@ Notes deploiement Vercel:
 | TLS | Cloudflare |
 | Persistance BDD | Volume Docker PostgreSQL |
 | Domaine backend | yatzy.puglabz.com |
-
-
