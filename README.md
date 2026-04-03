@@ -208,5 +208,5 @@ Notes deploiement Vercel:
 | Domaine backend | yatzy.puglabz.com |
 | Logs | Dozzle + logs Traefik |
 
-Le projet étant hébergé sur un serveur privé, un accès à Dozzle est disponible pour consulter les logs des conteneurs Docker en temps réel. Cela permet de monitorer le comportement du backend, détecter des erreurs et renforcer la sécurité en auditant l'activité des services. Les logs Traefik complètent ce dispositif en traçant l'ensemble du trafic HTTP entrant au niveau du reverse proxy.
+✯ Le projet étant hébergé sur un serveur privé, un accès à Dozzle est disponible pour consulter les logs des conteneurs Docker en temps réel. Cela permet de monitorer le comportement du backend, détecter des erreurs et renforcer la sécurité en auditant l'activité des services. Idem pour Traeffik, les logs complètent ce dispositif en traçant l'ensemble du trafic HTTP entrant au niveau du reverse proxy.
 
