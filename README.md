@@ -1,5 +1,7 @@
 # Yam Master ♥
 
+### https://socket-io-lac.vercel.app/
+
 Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.IO/Express, persistence PostgreSQL via Prisma, authentification Better Auth.
 
 ## Sommaire
@@ -27,8 +29,8 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 | Auth | Better Auth (adapter Prisma) |
 | Dev infra locale | Docker Compose + Adminer |
 | Infra prod | Home Server + Traefik + Docker Compose |
-| **Etat backend** | ✅ Deploye et operationel |
-| **Etat frontend** | ⚠ Vercel (Web incomplet car soucis avec le provider d'auth), Mobile en attente (frais pour plateformes mobiles) |
+| **Etat backend** | ✓ Deployé et operationel sur serveur physique privé |
+| **Etat frontend** | ✓ Vercel (Web operationel), Mobile en attente (frais trop importants pour plateformes mobiles) |
 | Domaine backend | https://yatzy.puglabz.com |
 
 ## Architecture
@@ -79,8 +81,8 @@ Jeu mobile multijoueur temps reel base sur React Native + Expo, backend Socket.I
 - Domaine explicite: game service centralise regles, combinaisons, score et conditions de victoire.
 - Persistence maintenable: GameRepository isole l'ecriture des resultats.
 - Front modulaire: separation components/modules/screens pour reduire le couplage.
-- Multi-environnements natifs: local, preview, production via profils EAS et compose overrides.
-- Data ownership: backend auto-heberge sur Home Server.
+- Multi-environnements natifs: local et production
+- Data ownership: backend auto-heberge sur Home Server personnel
 
 ## Installation locale
 
@@ -98,7 +100,7 @@ cd socket-io
 cp .env.example .env
 ~~~
 
-Variables minimales a renseigner dans .env:
+Variables a renseigner dans .env:
 
 - POSTGRES_USER
 - POSTGRES_PASSWORD
@@ -116,7 +118,7 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml up -d db admine
 
 Visualisation de la base:
 
-- Adminer: http://localhost:8080
+- Adminer (outil de visualisation BDD dockerisé): http://localhost:8080
 
 ### 3. Lancer le backend
 
@@ -185,33 +187,26 @@ Notes reseau mobile:
 
 ### Frontend en production
 
-| Environnement | plateforme | URL backend | Etat |
+| Environnement | Plateforme | URL | Etat |
 |---|---|---|---|
-| Vercel | Web (React Native Web) | https://yatzy.puglabz.com | ⚠ Deploye incomplet |
-| Mobile | iOS/Android (Expo EAS) | https://yatzy.puglabz.com | ❌ Non disponible |
+| Vercel | Web (React Native Web) | https://socket-io-lac.vercel.app | ✓ Operationel |
+| Mobile | iOS/Android (Expo EAS) | https://yatzy.puglabz.com | X Non disponible (frais plateformes) |
 
-Raison du deploiement Vercel incomplet:
+Notes deploiement Vercel:
 
-- Soucis avec le provider d'auth / Vercel (crossplatform), manque de temps
+- Les appels auth (`/api/auth/*`) sont proxifies via `vercel.json` vers le backend pour eviter les problemes de cookies cross-domain.
+- Socket.IO se connecte directement a `https://yatzy.puglabz.com`.
 
 ## Production et infrastructure
 
 | Composant | Choix |
 |---|---|
-| Hebergement backend | Home Server prive (✓ Deploye) |
-| Hebergement frontend Web | Vercel (⚠ Incomplet) |
-| Mobile frontend | En attente (limitations iOS/Android non resolues) |
+| Hebergement backend | Home Server prive (✓ Deployé) |
+| Hebergement frontend Web | Vercel (✓ Deployé) |
+| Mobile frontend | En attente (limitations iOS/Android d'ordre financière) |
 | Reverse proxy | Traefik |
-| TLS | Certificats geres via Traefik |
+| TLS | Cloudflare |
 | Persistance BDD | Volume Docker PostgreSQL |
 | Domaine backend | yatzy.puglabz.com |
-
-### Etat du deploiement
-
-**Backend (Home Server)**: Entierement deploye et operationel.
-
-~~~bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-~~~
 
 
