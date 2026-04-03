@@ -8,13 +8,38 @@ import { initSocket } from './bootstrap/socket';
 import { auth } from './modules/auth/auth';
 import { RankRepository } from './modules/rank/rank.repository';
 
-const ALLOWED_ORIGINS = process.env.TRUSTED_ORIGINS
-  ? process.env.TRUSTED_ORIGINS.split(',')
-  : ['http://localhost:8081', 'http://localhost:19006'];
+const normalizeOrigin = (origin: string): string =>
+  origin
+    .trim()
+    .replace(/^['"]|['"]$/g, '')
+    .replace(/\/$/, '');
+
+const ALLOWED_ORIGINS = (
+  process.env.TRUSTED_ORIGINS
+    ? process.env.TRUSTED_ORIGINS.split(',')
+    : ['http://localhost:8081', 'http://localhost:19006']
+)
+  .map(normalizeOrigin)
+  .filter(Boolean);
+
+const ALLOWED_ORIGIN_SET = new Set(ALLOWED_ORIGINS);
 
 const app = express();
 
-app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      const normalizedOrigin = normalizeOrigin(origin);
+      callback(null, ALLOWED_ORIGIN_SET.has(normalizedOrigin));
+    },
+    credentials: true,
+  }),
+);
 
 // Auth routes must be registered BEFORE express.json()
 // because Better Auth reads the raw body itself
